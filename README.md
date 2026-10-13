@@ -19,13 +19,13 @@ While analyzing global trends, the labs pay special empirical attention to eight
 The sequence spans five hands-on computational workbooks:
 
 ### Lab 1: Data Hygiene, Tidy Pipelines & Time-Series
-* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/reports/research-report.html) | [View Quarto Source Code](reports/research-report.qmd)
+* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/reports/Measuring Global Human Development.html) | [View Quarto Source Code](reports/research-report.qmd)
 * **Focus:** Data wrangling, stock vs. flow metrics, handling missingness by design, and panel visualizations.
 * **Methods:** Multi-way relational joins (`inner_join`), long/wide transformations, and panel trend graphs.
 * **Key Concept:** Distinguishing structural development trends from temporary macro-shocks (2008 Financial Crisis, 2020 COVID shock).
 
 ### Lab 2: Spatial Analysis & Vector Mapping
-* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/Spatial-Data-Analysis---Mapping-in-R.html) | [View RMarkdown Source Code](Spatial-Data-Analysis---Mapping-in-R.rmarkdown)
+* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/Spatial Data Analysis & Mapping in R.html) | [View RMarkdown Source Code](Spatial-Data-Analysis---Mapping-in-R.rmarkdown)
 * **Focus:** Geographic data structures, spatial joins, cartographic projections, and choropleths.
 * **Methods:** Geospatial manipulation with `sf`, spatial joining (`st_join`), Equal Earth projections, and `viridis` color scales.
 * **Key Concept:** Cartographic ethics and mapping spatial inequality across Global South regions without map projection distortion.
@@ -37,7 +37,7 @@ The sequence spans five hands-on computational workbooks:
 * **Key Concept:** Testing the Preston Curve—evaluating positive health outliers (nations overperforming their economic baselines) vs. negative outliers.
 
 ### Lab 4: Advanced Econometric Modeling — Panel Fixed Effects & Logit
-* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/lab-4-advanced-models.html) | [View Quarto Source Code](lab-4-advanced-models.qmd)
+* **Links:** [View Live Web Report](https://neenzworld.github.io/Writing-a-Social-Science-Report/lab 4.advanced-models.html) | [View Quarto Source Code](lab-4-advanced-models.qmd)
 * **Focus:** Panel data fixed effects and binary outcome modeling for structural poverty traps.
 * **Methods:** Two-Way Fixed Effects (`fixest::feols`), Logistic Regression (`glm`), Odds Ratios ($\exp(\beta)$), and predicted probability S-curves.
 * **Key Concept:** Eliminating time-invariant omitted variable bias (geography, colonial institutional legacies) and calculating vulnerability probabilities.
