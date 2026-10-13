@@ -61,6 +61,7 @@ Before writing any code, let us break down how quantitative research works. Soci
 - **Conceptualisation** 
 
 Defining the theoretical idea we want to study (e.g., "material poverty").
+
 - **Operationalisation** 
 
 Choosing the exact numerical metric we will use to measure that idea in the real world.
@@ -311,9 +312,13 @@ Check out the educational trajectories displayed in Figure 2:
 1. **Colonial Legacies & Baseline Inequality** 
 
 Notice the substantial initial gap in 1990 between post-industrial economies (Canada, United States) and post-colonial societies (India, Nigeria, South Africa, Jamaica). Colonial-era educational systems were often extractive and restrictive, moreso designed to train minor administrative staff rather than foster broad-based national human capital. What might the purpose of education in your region be now?
+
 2. **Post-Colonial Educational Expansion** 
+
 Despite historical disadvantages, Global South nations demonstrate steady, upward educational expansion post-1990. State-funded initiatives, global campaigns like the Millennium Development Goals (MDGs) and domestic investments have expanded access to schooling across Latin America, South Asia, and Sub-Saharan Africa.
+
 3. **Quantity vs. Quality Disconnect** 
+
 While mean years of schooling (a quantitative stock metric) shows clear convergence, social scientists from the Global South emphasise that **years in school do not automatically equal learning outcomes**. Under-resourced public schools, high student-to-teacher ratios and brain drain (the emigration of skilled graduates) mean that educational expansion must be paired with structural economic opportunities locally.
 
 ---

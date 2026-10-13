@@ -355,10 +355,10 @@ display: none;
 <div id="quantitative-political-economy-computational-pedagogy-series" class="section level1">
 <h1>Quantitative Political Economy &amp; Computational Pedagogy
 Series</h1>
-<p>A computational pedagogy series using <strong>R</strong>,
-<strong>Quarto</strong>, and <strong>Tidyverse</strong> to analyze
-international human development, poverty dynamics and population
-health.</p>
+<p>An undergraduate computational pedagogy series using
+<strong>R</strong>, <strong>Quarto</strong>, and
+<strong>Tidyverse</strong> to analyze international human development,
+poverty dynamics and population health.</p>
 <p>Designed for social science students, this curriculum combines
 rigorous data hygiene, spatial analysis, econometric modeling and
 machine learning while maintaining my Global South lens.</p>
@@ -375,9 +375,11 @@ Brazil, India, Nigeria, South Africa</p>
 <h2>Lab Curriculum Overview</h2>
 <p>The sequence spans five hands-on computational workbooks:</p>
 <div id="lab-1-data-hygiene-tidy-pipelines-time-series" class="section level3">
-<h3><a href="reports/research-report.qmd">Lab 1: Data Hygiene, Tidy
-Pipelines &amp; Time-Series</a></h3>
+<h3>Lab 1: Data Hygiene, Tidy Pipelines &amp; Time-Series</h3>
 <ul>
+<li><strong>Links:</strong> <a href="https://neenzworld.github.io/Writing-a-Social-Science-Report/reports/research-report.html">View
+Live Web Report</a> | <a href="reports/research-report.qmd">View Quarto
+Source Code</a></li>
 <li><strong>Focus:</strong> Data wrangling, stock vs. flow metrics,
 handling missingness by design, and panel visualizations.</li>
 <li><strong>Methods:</strong> Multi-way relational joins
@@ -389,9 +391,11 @@ shock).</li>
 </ul>
 </div>
 <div id="lab-2-spatial-analysis-vector-mapping" class="section level3">
-<h3><a href="lab-2-maps.qmd">Lab 2: Spatial Analysis &amp; Vector
-Mapping</a></h3>
+<h3>Lab 2: Spatial Analysis &amp; Vector Mapping</h3>
 <ul>
+<li><strong>Links:</strong> <a href="https://neenzworld.github.io/Writing-a-Social-Science-Report/Spatial-Data-Analysis---Mapping-in-R.html">View
+Live Web Report</a> | <a href="Spatial-Data-Analysis---Mapping-in-R.rmarkdown">View RMarkdown
+Source Code</a></li>
 <li><strong>Focus:</strong> Geographic data structures, spatial joins,
 cartographic projections, and choropleths.</li>
 <li><strong>Methods:</strong> Geospatial manipulation with
@@ -403,9 +407,11 @@ distortion.</li>
 </ul>
 </div>
 <div id="lab-3-cross-sectional-modeling-the-preston-curve" class="section level3">
-<h3><a href="lab-3-modeling.qmd">Lab 3: Cross-Sectional Modeling &amp;
-The Preston Curve</a></h3>
+<h3>Lab 3: Cross-Sectional Modeling &amp; The Preston Curve</h3>
 <ul>
+<li><strong>Links:</strong> <a href="https://neenzworld.github.io/Writing-a-Social-Science-Report/lab-3-modeling.html">View
+Live Web Report</a> | <a href="lab-3-modeling.qmd">View Quarto Source
+Code</a></li>
 <li><strong>Focus:</strong> Bivariate linear/logarithmic regression,
 goodness-of-fit evaluation, and residual analysis.</li>
 <li><strong>Methods:</strong> Ordinary Least Squares (<code>lm</code>),
@@ -417,9 +423,12 @@ baselines) vs. negative outliers.</li>
 </ul>
 </div>
 <div id="lab-4-advanced-econometric-modeling-panel-fixed-effects-logit" class="section level3">
-<h3><a href="lab-4-advanced-models.qmd">Lab 4: Advanced Econometric
-Modeling — Panel Fixed Effects &amp; Logit</a></h3>
+<h3>Lab 4: Advanced Econometric Modeling — Panel Fixed Effects &amp;
+Logit</h3>
 <ul>
+<li><strong>Links:</strong> <a href="https://neenzworld.github.io/Writing-a-Social-Science-Report/lab-4-advanced-models.html">View
+Live Web Report</a> | <a href="lab-4-advanced-models.qmd">View Quarto
+Source Code</a></li>
 <li><strong>Focus:</strong> Panel data fixed effects and binary outcome
 modeling for structural poverty traps.</li>
 <li><strong>Methods:</strong> Two-Way Fixed Effects
@@ -432,9 +441,12 @@ calculating vulnerability probabilities.</li>
 </ul>
 </div>
 <div id="lab-5-computational-typologies-pca-unsupervised-clustering" class="section level3">
-<h3><a href="lab-5-unsupervised-learning.qmd">Lab 5: Computational
-Typologies — PCA &amp; Unsupervised Clustering</a></h3>
+<h3>Lab 5: Computational Typologies — PCA &amp; Unsupervised
+Clustering</h3>
 <ul>
+<li><strong>Links:</strong> <a href="https://neenzworld.github.io/Writing-a-Social-Science-Report/lab-5-unsupervised-learning.html">View
+Live Web Report</a> | <a href="lab-5-unsupervised-learning.qmd">View
+Quarto Source Code</a></li>
 <li><strong>Focus:</strong> Feature standardisation, dimensionality
 reduction, and unsupervised machine learning.</li>
 <li><strong>Methods:</strong> <span class="math inline">\(Z\)</span>-score scaling (<code>scale</code>),
@@ -461,22 +473,27 @@ middle-income heterogeneity.</li>
 <code>fixest</code>, <code>ggrepel</code></li>
 <li><strong>Machine Learning:</strong> Base R <code>prcomp</code>,
 <code>kmeans</code>, <code>stats</code></li>
-<li><strong>Publishing Engine:</strong> <a href="https://quarto.org/">Quarto</a> (<code>.qmd</code>) compiled to
-responsive HTML</li>
+<li><strong>Publishing Engine:</strong> <a href="https://quarto.org/">Quarto</a> (<code>.qmd</code>) / R Markdown
+compiled to responsive HTML</li>
 </ul>
 <hr />
 </div>
-<div id="repository-data-architecture" class="section level2">
-<h2>Repository &amp; Data Architecture</h2>
+<div id="repository-architecture" class="section level2">
+<h2>Repository Architecture</h2>
 <p>```text ├── data/ │ ├── poverty_data.csv # OWID / World Bank PIP
 headcount poverty ($3/day) │ ├── education_data.csv # OWID Mean Years of
 Schooling (Adults 15+) │ └── life_expectancy_data.csv # OWID Life
-Expectancy at birth ├── reports/ │ └── research-report.qmd # Lab 1
-Quarto Document ├── lab-2-maps.qmd # Lab 2 Quarto Document ├──
-lab-3-modeling.qmd # Lab 3 Quarto Document ├── lab-4-advanced-models.qmd
-# Lab 4 Quarto Document ├── lab-5-unsupervised-learning.qmd # Lab 5
-Quarto Document └── README.md # Curriculum Overview &amp;
-Documentation</p>
+Expectancy at birth ├── reports/ │ ├── research-report.qmd # Lab 1
+Quarto Source │ └── research-report.html # Lab 1 Rendered Output ├──
+.nojekyll # Unlocks reports/ subfolder for GitHub Pages ├──
+Spatial-Data-Analysis—Mapping-in-R.rmarkdown # Lab 2 Source ├──
+Spatial-Data-Analysis—Mapping-in-R.html # Lab 2 Rendered Output ├──
+lab-3-modeling.qmd # Lab 3 Quarto Source ├── lab-3-modeling.html # Lab 3
+Rendered Output ├── lab-4-advanced-models.qmd # Lab 4 Quarto Source ├──
+lab-4-advanced-models.html # Lab 4 Rendered Output ├──
+lab-5-unsupervised-learning.qmd # Lab 5 Quarto Source ├──
+lab-5-unsupervised-learning.html # Lab 5 Rendered Output └── README.md #
+Curriculum Overview &amp; Documentation</p>
 </div>
 </div>
 
