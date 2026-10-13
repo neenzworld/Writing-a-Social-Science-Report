@@ -1,38 +1,71 @@
-# Social Science Report in R: A Computational Workbook
+# Quantitative Political Economy & Computational Pedagogy Series
 
-[![R](https://img.shields.io/badge/R-4.x-blue.svg)](https://www.r-project.org/)
-[![Quarto](https://img.shields.io/badge/Quarto-1.x-purple.svg)](https://quarto.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+A computational pedagogy series using **R**, **Quarto**, and **Tidyverse** to analyze international human development, poverty dynamics and population health. 
 
-An open-source, reproducible computational workbook designed for beginning social science students and researchers learning quantitative data processing and visualization in R.
-
-Using open data from **Our World in Data** (World Bank, Barro-Lee, UN WPP), this repository demonstrates how to filter, clean, transform, join, and visualize developmental indicators across eight comparative country cases without relying on static spreadsheets.
+Designed for social science students, this curriculum combines rigorous data hygiene, spatial analysis, econometric modeling and machine learning while maintaining my Global South lens.
 
 ---
 
-## 📌 Target Cases & Development Indicators
+## Comparative Case Studies
 
-The workbook examines panel data from **1990 to Present** across eight diverse national economies:
-
-* **Target Countries:** Jamaica, Canada, United States, India, Brazil, Spain, Nigeria, and South Africa.
-* **Module 1 (Poverty):** Extreme poverty rates living on less than $3.00/day (PPP adjusted).
-* **Module 2 (Education):** Mean years of formal schooling completed by adults aged 15+.
-* **Module 3 (Health):** Period life expectancy at birth in years.
+While analyzing global trends, the labs pay special empirical attention to eight comparative nations:
+* **Global North:** Canada, United States, Spain
+* **Global South:** Jamaica, Brazil, India, Nigeria, South Africa
 
 ---
 
-## 📁 Repository Structure
+## Lab Curriculum Overview
+
+The sequence spans five hands-on computational workbooks:
+
+### [Lab 1: Data Hygiene, Tidy Pipelines & Time-Series](reports/research-report.qmd)
+* **Focus:** Data wrangling, stock vs. flow metrics, handling missingness by design, and panel visualizations.
+* **Methods:** Multi-way relational joins (`inner_join`), long/wide transformations, and panel trend graphs.
+* **Key Concept:** Distinguishing structural development trends from temporary macro-shocks (2008 Financial Crisis, 2020 COVID shock).
+
+### [Lab 2: Spatial Analysis & Vector Mapping](lab-2-maps.qmd)
+* **Focus:** Geographic data structures, spatial joins, cartographic projections, and choropleths.
+* **Methods:** Geospatial manipulation with `sf`, spatial joining (`st_join`), Equal Earth projections, and `viridis` color scales.
+* **Key Concept:** Cartographic ethics and mapping spatial inequality across Global South regions without map projection distortion.
+
+### [Lab 3: Cross-Sectional Modeling & The Preston Curve](lab-3-modeling.qmd)
+* **Focus:** Bivariate linear/logarithmic regression, goodness-of-fit evaluation, and residual analysis.
+* **Methods:** Ordinary Least Squares (`lm`), model tidying (`broom::tidy`, `glance`), and residual extraction (`augment`).
+* **Key Concept:** Testing the Preston Curve—evaluating positive health outliers (nations overperforming their economic baselines) vs. negative outliers.
+
+### [Lab 4: Advanced Econometric Modeling — Panel Fixed Effects & Logit](lab-4-advanced-models.qmd)
+* **Focus:** Panel data fixed effects and binary outcome modeling for structural poverty traps.
+* **Methods:** Two-Way Fixed Effects (`fixest::feols`), Logistic Regression (`glm`), Odds Ratios ($\exp(\beta)$), and predicted probability S-curves.
+* **Key Concept:** Eliminating time-invariant omitted variable bias (geography, colonial institutional legacies) and calculating vulnerability probabilities.
+
+### [Lab 5: Computational Typologies — PCA & Unsupervised Clustering](lab-5-unsupervised-learning.qmd)
+* **Focus:** Feature standardisation, dimensionality reduction, and unsupervised machine learning.
+* **Methods:** $Z$-score scaling (`scale`), Principal Component Analysis (`prcomp`), PCA biplots, and $k$-Means Clustering (`kmeans`).
+* **Key Concept:** Moving beyond rigid "North vs. South" binaries to discover data-driven country typologies and structural middle-income heterogeneity.
+
+---
+
+## Technical Stack & Packages
+
+* **Core R Infrastructure:** `tidyverse` (`dplyr`, `ggplot2`, `readr`, `tidyr`, `purrr`)
+* **Spatial Analytics:** `sf`, `rnaturalearth`, `rnaturalearthdata`, `viridis`
+* **Econometrics & Modeling:** `broom`, `fixest`, `ggrepel`
+* **Machine Learning:** Base R `prcomp`, `kmeans`, `stats`
+* **Publishing Engine:** [Quarto](https://quarto.org/) (`.qmd`) compiled to responsive HTML
+
+---
+
+## Repository & Data Architecture
 
 ```text
-social-science-report-template/
-├── data/                       # Local raw CSV datasets imported from OWID
-│   ├── poverty_data.csv
-│   ├── education_data.csv
-│   └── life_expectancy_data.csv
-├── outputs/                    # Output directory for exported figures & tables
-│   ├── figures/
-│   └── tables/
-├── reports/                    # Quarto source documents
-│   └── research-report.qmd     # Master computational workbook
-├── README.md                   # Repository overview and setup instructions
-└── social-science-report-template.Rproj  # RStudio Project File
+├── data/
+│   ├── poverty_data.csv          # OWID / World Bank PIP headcount poverty ($3/day)
+│   ├── education_data.csv        # OWID Mean Years of Schooling (Adults 15+)
+│   └── life_expectancy_data.csv  # OWID Life Expectancy at birth
+├── reports/
+│   └── research-report.qmd      # Lab 1 Quarto Document
+├── lab-2-maps.qmd                 # Lab 2 Quarto Document
+├── lab-3-modeling.qmd             # Lab 3 Quarto Document
+├── lab-4-advanced-models.qmd      # Lab 4 Quarto Document
+├── lab-5-unsupervised-learning.qmd # Lab 5 Quarto Document
+└── README.md                      # Curriculum Overview & Documentation

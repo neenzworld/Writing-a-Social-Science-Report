@@ -1,0 +1,282 @@
+---
+title: "Lab 3: Cross-Sectional Modeling & The Preston Curve"
+subtitle: "Evaluating Non-Linear Relationships, Regression Outliers & Systemic Inefficiencies"
+author: "Neena Abimbola Albarus"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    theme: flatly
+    code-fold: show
+    code-tools: true
+    fig-align: center
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# ==============================================================================
+# LECTURER SETUP & PACKAGES
+# ==============================================================================
+library(readr)     # For importing tabular CSV datasets
+library(dplyr)     # For data manipulation and filtering
+library(ggplot2)   # For plotting regression models and residuals
+library(broom)     # For tidying statistical model objects into data frames
+library(ggrepel)   # For non-overlapping text labels on scatter plots
+
+# Central comparative country vector
+countries_to_compare <- c(
+  "Jamaica",
+  "Canada",
+  "United States",
+  "India",
+  "Brazil",
+  "Spain",
+  "Nigeria",
+  "South Africa"
+)
+```
+
+# Introduction: Moving from Description to Modeling
+
+Welcome to Lab 3!
+
+In Lab 1 and Lab 2, we examined development trends across time and space using panel line graphs and choropleth maps. However, social scientists do more than describe patterns. We also test **theoretical relationships** between variables using statistical modeling.
+
+In this lab, we test a foundational concept in social epidemiology and political economy: **The Preston Curve**. Originally formulated by sociologist Samuel Preston in 1975, this relationship shows that life expectancy increases rapidly with initial reductions in absolute poverty, but displays **diminishing returns** as nations grow wealthier.
+
+::: callout-note
+### Learning Objectives
+
+By completing this workbook, you will learn how to: 1. Join multi-domain datasets into cross-sectional data frames for statistical modeling. 2. Fit Ordinary Least Squares (OLS) linear regression models using `lm()`. 3. Tidy model outputs into structured data frames using `broom::tidy()` and `broom::glance()`. 4. Extract model **residuals** to identify "positive outliers" (countries overperforming their economic baselines in health) and "negative outliers".
+:::
+
+::: callout-important
+### Methodological Rule: Cross-Sectional Isolation
+
+Unlike panel analysis where we track many years at once, cross-sectional modeling isolates a single point in time (e.g., Year = 2019) across multiple units to evaluate structural relationships without conflating temporal shocks.
+:::
+
+------------------------------------------------------------------------
+
+# Module 1: Constructing the Cross-Sectional Dataset
+
+To model the relationship between material deprivation and health outcomes, we perform a relational join (`inner_join()`) between `poverty_data.csv` and `life_expectancy_data.csv` for a pre-pandemic cross-sectional baseline (**2019**).
+
+```{r}
+#| label: prepare-cross-section
+#| message: false
+#| warning: false
+
+# Step A: Load datasets using root relative directory pathing
+poverty_df <- read_csv("data/poverty_data.csv")
+life_exp_df <- read_csv("data/life_expectancy_data.csv")
+
+# Step B: Filter and rename variables for 2019
+poverty_2019 <- poverty_df |>
+  filter(Year == 2019) |>
+  rename(poverty_3usd = `Share of population in poverty ($3 a day)`) |>
+  select(Entity, Code, Year, poverty_3usd)
+
+life_exp_2019 <- life_exp_df |>
+  filter(Year == 2019) |>
+  rename(life_expectancy = 4) |>
+  select(Entity, Code, Year, life_expectancy)
+
+# Step C: Merge into a clean cross-sectional analytical frame
+cross_section_2019 <- poverty_2019 |>
+  inner_join(life_exp_2019, by = c("Entity", "Code", "Year")) |>
+  filter(!is.na(poverty_3usd), !is.na(life_expectancy))
+
+# Display head of merged modeling dataset
+head(cross_section_2019)
+```
+
+------------------------------------------------------------------------
+
+# Module 2: Fitting Bivariate OLS Regression Models
+
+## Linear Baseline Model (`lm`)
+
+We fit a simple Bivariate Ordinary Least Squares (OLS) regression model to estimate how much life expectancy changes for every $1\%$ increase in extreme poverty headcount.
+
+$$\text{Life Expectancy}_i = \beta_0 + \beta_1 (\text{Poverty Rate}_i) + \varepsilon_i$$
+
+```{r}
+#| label: fit-linear-model
+
+# Fit linear model using lm()
+linear_model <- lm(life_expectancy ~ poverty_3usd, data = cross_section_2019)
+
+# Tidy model statistics into a standard dataframe using broom
+tidy(linear_model)
+```
+
+```{r}
+#| label: glance-linear-model
+
+# Evaluate goodness-of-fit metrics (R-squared, Residual Standard Error)
+glance(linear_model)
+```
+
+::: callout-note
+### Interpreting the Model Coefficients
+
+- **Intercept (**$\beta_0$): The baseline expected life expectancy when poverty is $0\%$.
+- **Slope (**$\beta_1$): For every $1\%$ increase in the population living below \$3.00/day, life expectancy decreases by the estimated coefficient in years.
+- $R^2$ (R-Squared): The proportion of global variance in life expectancy explained solely by extreme poverty rates.
+:::
+
+------------------------------------------------------------------------
+
+# Module 3: Visualising the Model & Residual Analysis
+
+## Visualising Linear vs. Non-Linear Fit
+
+Let us plot our linear trendline alongside our comparative case studies using `ggplot2` and `ggrepel`.
+
+```{r}
+#| label: fig-preston-curve
+#| fig-cap: "Figure 1: Cross-sectional relationship between extreme poverty ($3/day) and life expectancy at birth (2019)."
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5.5
+
+# Subset comparative country cases for explicit text highlighting
+highlight_cases <- cross_section_2019 |>
+  filter(Entity %in% countries_to_compare)
+
+ggplot(cross_section_2019, aes(x = poverty_3usd, y = life_expectancy)) +
+  geom_point(alpha = 0.5, color = "grey40", size = 2) +
+  geom_point(data = highlight_cases, aes(color = Entity), size = 3.5) +
+  geom_smooth(method = "lm", color = "firebrick", linetype = "dashed", se = FALSE) +
+  geom_text_repel(
+    data = highlight_cases,
+    aes(label = Entity),
+    size = 3.5,
+    max.overlaps = 15
+  ) +
+  labs(
+    title = "Cross-Sectional Regression: Deprivation vs. Population Health (2019)",
+    subtitle = "Linear OLS model testing the relationship across global economies",
+    x = "Population Living Below $3.00/day PPP (%)",
+    y = "Life Expectancy at Birth (Years)",
+    caption = "Source: Our World in Data / World Bank PIP."
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+------------------------------------------------------------------------
+
+## Residual Analysis: Overperformers vs. Underperformers
+
+A model **residual** ($e_i = y_i - \hat{y}_i$) measures the vertical distance between a country's actual observed outcome and the outcome predicted by the regression line:
+
+- **Positive Residual (**$e_i > 0$) - The country achieves higher life expectancy than its economic poverty rate would predict (**overperformer in public health efficiency**).
+- **Negative Residual (**$e_i < 0$) - The country achieves lower life expectancy than predicted (**underperformer due to health system fragmentation or disease burden**).
+
+Using `broom::augment()`, we can extract residuals directly into our dataset:
+
+```{r}
+#| label: calculate-residuals
+
+# Append fitted values and residuals to original dataset
+model_augmented <- augment(linear_model, data = cross_section_2019)
+
+# Inspect residual outcomes for our target comparative nations
+case_residuals <- model_augmented |>
+  filter(Entity %in% countries_to_compare) |>
+  select(Entity, poverty_3usd, life_expectancy, .fitted, .resid) |>
+  arrange(desc(.resid))
+
+case_residuals
+```
+
+## Global South Analytical Insights: Public Policy Efficiency
+
+Looking at the extracted residuals in the table above:
+
+1.  **State Policy Efficiency**
+
+    Nations with strong positive residuals demonstrate that targeted public interventions (e.g., universal immunization programs, primary sanitation networks, and accessible rural health posts) can decouple population health from absolute level of national wealth.
+
+2.  **Structural Disease Burden & Inequity**
+
+    Nations with deep negative residuals highlight cases where localized health crises (such as HIV prevalence or malaria endemicity) or health market fragmentation penalize life expectancy even when national economic metrics improve.
+
+------------------------------------------------------------------------
+
+# Student Coding Lab Exercises
+
+Complete these four exercises in your R environment to practice your statistical modeling pipeline!
+
+### Exercise 1: Logarithmic Model Fitting (`log`)
+
+Fit a non-linear log-transformed model using `lm(life_expectancy ~ log(poverty_3usd + 1))` to evaluate if a logarithmic curve improves the model $R^2$ relative to the linear model.
+
+``` r
+# EXERCISE 1: Log-transformed non-linear model fit
+log_model <- lm(life_expectancy ~ log(poverty_3usd + 1), data = cross_section_2019)
+
+# Compare model summaries
+glance(log_model)
+```
+
+### Exercise 2: Modeling Education vs. Health
+
+Merge `education_data.csv` and `life_expectancy_data.csv` for the year **2019**. Fit an OLS model predicting life expectancy from **Mean Years of Schooling**.
+
+``` r
+# EXERCISE 2: Model education stock against life expectancy
+edu_df <- read_csv("data/education_data.csv") |>
+  filter(Year == 2019) |>
+  rename(schooling_years = 4)
+
+edu_health_2019 <- edu_df |>
+  inner_join(life_exp_2019, by = c("Entity", "Code", "Year")) |>
+  filter(!is.na(schooling_years), !is.na(life_expectancy))
+
+edu_model <- lm(life_expectancy ~ schooling_years, data = edu_health_2019)
+tidy(edu_model)
+```
+
+### Exercise 3: Top 5 Global Overperformers
+
+Using `model_augmented`, write a `dplyr` pipeline to display the top 5 countries in the world with the highest positive residuals (biggest overperformers in life expectancy).
+
+``` r
+# EXERCISE 3: Find top 5 global positive outliers
+top_overperformers <- model_augmented |>
+  arrange(desc(.resid)) |>
+  select(Entity, poverty_3usd, life_expectancy, .resid) |>
+  head(5)
+
+top_overperformers
+```
+
+### Exercise 4: Residual Visualisation Bar Chart
+
+Build a horizontal bar chart in `ggplot2` showing the `.resid` column for our 8 comparative case study nations, colored by whether the residual is positive or negative.
+
+``` r
+# EXERCISE 4: Residual bar plot for comparative cases
+ggplot(case_residuals, aes(x = reorder(Entity, .resid), y = .resid, fill = .resid > 0)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c("firebrick", "forestgreen"), labels = c("Underperformer", "Overperformer")) +
+  labs(
+    title = "Public Health Model Residuals (2019)",
+    x = "Country Case",
+    y = "Residual (Observed - Predicted Life Expectancy in Years)",
+    fill = "Performance Status"
+  ) +
+  theme_minimal()
+```

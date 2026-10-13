@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="introduction-spatial-analysis-in-social-science" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction: Spatial Analysis in Social Science</h1>
 <p>Welcome to Lab 2!</p>
-<p>In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries, and ecological zones heavily shape human development outcomes.</p>
+<p>In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries and ecological zones heavily shape human development outcomes.</p>
 <p>In this lab, we transition from time-series charts to <strong>choropleth maps</strong> (maps where geographical areas are coloured according to an underlying metric).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -154,7 +154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using <code>sf</code> and <code>rnaturalearth</code>. 2. Execute spatial joins (<code>left_join</code>) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using <code>ggplot2</code> and <code>geom_sf()</code>. 4. Apply cartographic projections suitable for global analysis.</p>
+<p>Upon completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using <code>sf</code> and <code>rnaturalearth</code>. 2. Execute spatial joins (<code>left_join</code>) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using <code>ggplot2</code> and <code>geom_sf()</code>. 4. Apply cartographic projections suitable for global analysis.</p>
 </div>
 </div>
 <hr>
@@ -194,7 +194,7 @@ $ geometry  &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((31.28789 -2..., MULTIPOLYG
 </div>
 <div class="callout-body-container callout-body">
 <p>Because the Earth is a 3D sphere, flattening it onto a 2D screen requires a mathematical projection.</p>
-<p>The traditional <strong>Mercator projection</strong> distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political—it shapes how spatial scales are perceived.</p>
+<p>The traditional <strong>Mercator projection</strong> distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political. It shapes how spatial scales are perceived.</p>
 </div>
 </div>
 <hr>
@@ -204,7 +204,7 @@ $ geometry  &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((31.28789 -2..., MULTIPOLYG
 <h1 data-number="3"><span class="header-section-number">3</span> Module 2: Mapping Global Health Inequalities</h1>
 <section id="merging-geometries-with-tabular-data" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="merging-geometries-with-tabular-data"><span class="header-section-number">3.1</span> Merging Geometries with Tabular Data</h2>
-<p>We join our spatial <code>world_map</code> object with <code>life_expectancy_data.csv</code> using the 3-letter ISO country code (<code>iso_a3</code> in <code>sf</code> and <code>Code</code> in OWID).</p>
+<p>We can join our spatial <code>world_map</code> object with <code>life_expectancy_data.csv</code> using the 3-letter ISO country code (<code>iso_a3</code> in <code>sf</code> and <code>Code</code> in OWID).</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -268,7 +268,7 @@ Figure&nbsp;1: Figure 1: Global distribution of period life expectancy at birth 
 </section>
 <section id="module-3-comparative-spatial-zoom-regional-focus" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Module 3: Comparative Spatial Zoom — Regional Focus</h1>
-<p>We filter our spatial dataset to examine intra-regional variance across <strong>Latin America &amp; Caribbean</strong> and <strong>Sub-Saharan Africa</strong>.</p>
+<p>We can filter our spatial dataset to examine intra-regional variance across <strong>Latin America &amp; Caribbean</strong> and <strong>Sub-Saharan Africa</strong>.</p>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -872,14 +872,14 @@ Figure&nbsp;2: Figure 2: Regional breakdown of life expectancy across Africa and
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>Welcome to Lab 2!</span>
 <span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries, and ecological zones heavily shape human development outcomes.</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries and ecological zones heavily shape human development outcomes.</span>
 <span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>In this lab, we transition from time-series charts to **choropleth maps** (maps where geographical areas are coloured according to an underlying metric).</span>
 <span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
 <span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### Learning Objectives</span></span>
 <span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>By completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using <span class="in">`sf`</span> and <span class="in">`rnaturalearth`</span>. 2. Execute spatial joins (<span class="in">`left_join`</span>) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using <span class="in">`ggplot2`</span> and <span class="in">`geom_sf()`</span>. 4. Apply cartographic projections suitable for global analysis.</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>Upon completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using <span class="in">`sf`</span> and <span class="in">`rnaturalearth`</span>. 2. Execute spatial joins (<span class="in">`left_join`</span>) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using <span class="in">`ggplot2`</span> and <span class="in">`geom_sf()`</span>. 4. Apply cartographic projections suitable for global analysis.</span>
 <span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------</span>
@@ -909,7 +909,7 @@ Figure&nbsp;2: Figure 2: Regional breakdown of life expectancy across Africa and
 <span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>Because the Earth is a 3D sphere, flattening it onto a 2D screen requires a mathematical projection.</span>
 <span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>The traditional **Mercator projection** distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political—it shapes how spatial scales are perceived.</span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>The traditional **Mercator projection** distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political. It shapes how spatial scales are perceived.</span>
 <span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------</span>
@@ -918,7 +918,7 @@ Figure&nbsp;2: Figure 2: Regional breakdown of life expectancy across Africa and
 <span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Merging Geometries with Tabular Data</span></span>
 <span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>We join our spatial <span class="in">`world_map`</span> object with <span class="in">`life_expectancy_data.csv`</span> using the 3-letter ISO country code (<span class="in">`iso_a3`</span> in <span class="in">`sf`</span> and <span class="in">`Code`</span> in OWID).</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>We can join our spatial <span class="in">`world_map`</span> object with <span class="in">`life_expectancy_data.csv`</span> using the 3-letter ISO country code (<span class="in">`iso_a3`</span> in <span class="in">`sf`</span> and <span class="in">`Code`</span> in OWID).</span>
 <span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: join-health-data</span></span>
@@ -977,7 +977,7 @@ Figure&nbsp;2: Figure 2: Regional breakdown of life expectancy across Africa and
 <span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a><span class="fu"># Module 3: Comparative Spatial Zoom — Regional Focus</span></span>
 <span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>We filter our spatial dataset to examine intra-regional variance across **Latin America &amp; Caribbean** and **Sub-Saharan Africa**.</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>We can filter our spatial dataset to examine intra-regional variance across **Latin America &amp; Caribbean** and **Sub-Saharan Africa**.</span>
 <span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-regional-health-map</span></span>

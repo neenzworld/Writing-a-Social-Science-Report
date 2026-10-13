@@ -1,0 +1,353 @@
+---
+title: "Lab 5: Computational Typologies — PCA & Unsupervised Cluster Analysis"
+subtitle: "Dimensionality Reduction, Machine Learning & Deconstructing Comparative Binaries"
+author: "Neena Abimbola Albarus"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    theme: flatly
+    code-fold: show
+    code-tools: true
+    fig-align: center
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# ==============================================================================
+# LECTURER SETUP & PACKAGES
+# ==============================================================================
+library(readr)     # For tabular CSV dataset importation
+library(dplyr)     # For data manipulation, scaling, and feature selection
+library(ggplot2)   # For visualising biplots and cluster geometries
+library(broom)     # For tidying cluster outputs
+library(ggrepel)   # For non-overlapping country labels on feature space
+
+# Central comparative country vector
+countries_to_compare <- c(
+  "Jamaica",
+  "Canada",
+  "United States",
+  "India",
+  "Brazil",
+  "Spain",
+  "Nigeria",
+  "South Africa"
+)
+```
+
+# Introduction: Beyond Arbitrary Spatial & Economic Binaries
+
+Welcome to Lab 5!
+
+In traditional comparative political economy, social scientists frequently use static classifications like "Global North vs. Global South," "Developed vs. Developing," or regional groupings. While useful as initial heuristics, these binaries often mask immense structural heterogeneity within groups.
+
+In this lab, we turn to **Unsupervised Machine Learning**. Unsupervised methods do not rely on pre-assigned labels or target variables ($y$). Instead, they search for hidden patterns, geometric structures, and empirical groupings directly within the multi-dimensional feature space ($X$).
+
+::: callout-note
+### Learning Objectives
+
+By completing this workbook, you will learn how to: 1. Standardize (z-score scale) variables to prevent scale-bias in distance metrics. 2. Execute **Principal Component Analysis (PCA)** using `prcomp()` to reduce high-dimensional development metrics into orthogonal dimensions. 3. Evaluate component loadings and variance explained (Scree Plots). 4. Perform $k$-Means Clustering to partition global political economies into data-driven development typologies.
+:::
+
+------------------------------------------------------------------------
+
+# Module 1: Feature Engineering & Standardisation
+
+## Why Scale Variables?
+
+Unsupervised algorithms ($k$-means, PCA) rely on **Euclidean distance** calculations:
+
+$$d(p, q) = \sqrt{\sum_{i=1}^n (p_i - q_i)^2}$$
+
+If one variable is measured in dollars or percentages ($0–100\%$) while another is measured in years of schooling ($0–15$), the variable with the larger numerical scale will dominate the distance calculation!
+
+To ensure equal weighting, we transform every variable into a $Z$-score (mean = 0, standard deviation = 1):
+
+$$Z = \frac{x - \mu}{\sigma}$$
+
+```{r}
+#| label: prepare-cluster-data
+#| message: false
+#| warning: false
+
+# Step A: Load and extract most recent non-missing value per country
+poverty_df <- read_csv("data/poverty_data.csv") |>
+  rename(poverty_3usd = `Share of population in poverty ($3 a day)`) |>
+  filter(!is.na(poverty_3usd)) |>
+  group_by(Entity, Code) |>
+  slice_max(Year, n = 1) |>
+  ungroup() |>
+  select(Entity, Code, poverty_3usd)
+
+edu_df <- read_csv("data/education_data.csv") |>
+  rename(schooling_years = 4) |>
+  filter(!is.na(schooling_years)) |>
+  group_by(Entity, Code) |>
+  slice_max(Year, n = 1) |>
+  ungroup() |>
+  select(Entity, Code, schooling_years)
+
+life_df <- read_csv("data/life_expectancy_data.csv") |>
+  rename(life_expectancy = 4) |>
+  filter(!is.na(life_expectancy)) |>
+  group_by(Entity, Code) |>
+  slice_max(Year, n = 1) |>
+  ungroup() |>
+  select(Entity, Code, life_expectancy)
+
+# Step B: Relational join on Entity and Code
+cluster_raw <- life_df |>
+  inner_join(edu_df, by = c("Entity", "Code")) |>
+  inner_join(poverty_df, by = c("Entity", "Code")) |>
+  distinct(Entity, .keep_all = TRUE)
+
+# Step C: Extract numeric feature matrix
+feature_df <- cluster_raw |>
+  select(life_expectancy, schooling_years, poverty_3usd) |>
+  as.data.frame()
+
+rownames(feature_df) <- cluster_raw$Entity
+
+# Manual Z-score matrix for k-means
+scaled_matrix <- scale(feature_df)
+
+# View top of scaled feature space
+head(scaled_matrix)
+```
+
+------------------------------------------------------------------------
+
+# Module 2: Principal Component Analysis (PCA)
+
+## Compressing High-Dimensional Development Space
+
+Principal Component Analysis (PCA) transforms correlated features into a smaller set of uncorrelated, orthogonal variables called **Principal Components (PC1, PC2, etc.)**:
+
+- **PC1** captures the maximum possible variance across the global development features.
+- **PC2:** captures the maximum remaining variance orthogonal (uncorrelated) to PC1.
+
+```{r}
+#| label: fit-pca
+
+# Run PCA on scaled matrix
+pca_result <- prcomp(scaled_matrix, center = FALSE, scale. = FALSE)
+
+# Inspect standard deviations and proportion of variance explained
+summary(pca_result)
+```
+
+## Inspecting Variable Loadings
+
+Component **loadings** show how much each original indicator contributes to each principal component.
+
+```{r}
+#| label: pca-loadings
+
+# Extract rotation matrix (loadings)
+pca_result$rotation
+```
+
+::: callout-note
+### Interpreting PC1 & PC2
+
+- **PC1 (Development Index)**-High positive loadings on `life_expectancy` and `schooling_years`, with a strong negative loading on `poverty_3usd`. PC1 effectively acts as an empirical composite "Human Development Progress" axis!
+- **PC2 (Structural Divergence)-**Captures secondary variance where health and education metrics diverge from absolute income poverty levels.
+:::
+
+------------------------------------------------------------------------
+
+# Module 3: PCA Biplot Visualisation
+
+We project all global countries onto the two-dimensional PCA feature space defined by **PC1** and **PC2**, highlighting our eight comparative case study nations.
+
+```{r}
+#| label: fig-pca-biplot
+#| fig-cap: "Figure 1: Two-dimensional PCA feature space projection showing country coordinates and variable vectors."
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 6
+
+# Extract country coordinates along principal components
+pca_scores <- as.data.frame(pca_result$x)
+pca_scores$Entity <- rownames(pca_scores)
+
+# Highlight comparative countries
+highlight_pca <- pca_scores |>
+  filter(Entity %in% countries_to_compare)
+
+ggplot(pca_scores, aes(x = PC1, y = PC2)) +
+  geom_point(alpha = 0.4, color = "grey50", size = 2) +
+  geom_point(data = highlight_pca, aes(color = Entity), size = 4) +
+  geom_text_repel(
+    data = highlight_pca,
+    aes(label = Entity),
+    size = 4,
+    fontface = "bold",
+    max.overlaps = 15
+  ) +
+  geom_vline(xintercept = 0, linetype = "dashed", alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
+  labs(
+    title = "PCA Feature Projection: Global Human Development Space",
+    subtitle = "PC1 (Development Momentum) vs. PC2 (Structural Disconnect)",
+    x = "Principal Component 1 (PC1 - 80%+ Variance Explained)",
+    y = "Principal Component 2 (PC2)",
+    caption = "Source: Author calculations using OWID datasets."
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+------------------------------------------------------------------------
+
+# Module 4: $k$-Means Clustering Analysis
+
+While PCA collapses continuous dimensions, $k$-Means Clustering partitions nations into $k$ discrete structural clusters by minimizing within-cluster sum of squares (WCSS).
+
+We partition the global data into $k = 3$ Empirical Development Clusters.
+
+```{r}
+#| label: run-kmeans
+
+# Set seed for reproducible cluster initialization
+set.seed(1234)
+
+# Fit k-means with k = 3
+kmeans_result <- kmeans(scaled_matrix, centers = 3, nstart = 25)
+
+# Append cluster assignments back to original data
+cluster_raw$cluster <- as.factor(kmeans_result$cluster)
+pca_scores$cluster  <- as.factor(kmeans_result$cluster)
+
+# Inspect cluster centroids (in z-score units)
+kmeans_result$centers
+```
+
+------------------------------------------------------------------------
+
+## Visualising Empirical Clusters in PCA Space
+
+We visualize the resulting data-driven clusters overlaid on top of our PCA coordinates.
+
+```{r}
+#| label: fig-cluster-map
+#| fig-cap: "Figure 2: Empirical k-Means clusters (k = 3) mapped onto the 2D PCA feature projection."
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 6
+
+highlight_clusters <- pca_scores |>
+  filter(Entity %in% countries_to_compare)
+
+ggplot(pca_scores, aes(x = PC1, y = PC2, color = cluster)) +
+  geom_point(alpha = 0.6, size = 2.5) +
+  stat_ellipse(aes(fill = cluster), geom = "polygon", alpha = 0.15, level = 0.8) +
+  geom_text_repel(
+    data = highlight_clusters,
+    aes(label = Entity),
+    size = 3.8,
+    fontface = "bold",
+    color = "black",
+    max.overlaps = 15
+  ) +
+  scale_color_brewer(palette = "Set1", name = "Empirical Cluster") +
+  scale_fill_brewer(palette = "Set1", name = "Empirical Cluster") +
+  labs(
+    title = "k-Means Development Typologies in PCA Space",
+    subtitle = "Data-driven country clusters discovered without pre-assigned geographic labels",
+    x = "PC1 (Development Momentum)",
+    y = "PC2 (Structural Disconnect)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+## Global South Analytical Insights: Deconstructing Typologies
+
+Looking at Figure 2 and the cluster centroids:
+
+1.  **Beyond "North vs. South":** Notice how middle-income Global South economies like **Brazil** and **Jamaica** cluster closer to post-industrial economies (**Canada**, **Spain**) along PC1 than they do to severe absolute deprivation contexts.
+2.  **Structural Heterogeneity:** Unsupervised clustering reveals that the "Global South" is not a monolith. Post-colonial economies split into distinct structural clusters: emerging social-protection states vs. high-poverty structural trap contexts.
+
+------------------------------------------------------------------------
+
+# Student Coding Lab Exercises
+
+Complete these four exercises in your R environment to practice unsupervised modeling!
+
+### Exercise 1: Finding Optimal $k$ (Elbow Method)
+
+Write a loop to calculate the Total Within-Cluster Sum of Squares (Total WCSS) for $k = 1$ through $k = 6$, and plot a Scree/Elbow curve to evaluate the optimal number of clusters.
+
+``` r
+# EXERCISE 1: Elbow Method for optimal k
+wcss <- sapply(1:6, function(k) {
+  kmeans(scaled_matrix, centers = k, nstart = 25)$tot.withinss
+})
+
+elbow_df <- data.frame(k = 1:6, wcss = wcss)
+
+ggplot(elbow_df, aes(x = k, y = wcss)) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(title = "Elbow Plot for Optimal k Choice", x = "Number of Clusters (k)", y = "Total Within-Cluster SS") +
+  theme_minimal()
+```
+
+### Exercise 2: Cluster Profile Summaries
+
+Using `cluster_raw`, write a `dplyr` pipeline to calculate the **unscaled mean** for `life_expectancy`, `schooling_years`, and `poverty_3usd` across each of the 3 empirical clusters.
+
+``` r
+# EXERCISE 2: Natural-unit cluster profiles
+cluster_summary <- cluster_raw |>
+  group_by(cluster) |>
+  summarise(
+    n_countries     = n(),
+    avg_life_exp    = mean(life_expectancy),
+    avg_schooling   = mean(schooling_years),
+    avg_poverty_pct = mean(poverty_3usd)
+  )
+
+cluster_summary
+```
+
+### Exercise 3: Identifying Cluster Membership
+
+Write a pipeline to list all countries assigned to the same cluster as **Jamaica** and **Brazil**.
+
+``` r
+# EXERCISE 3: Inspect cluster peer group
+jamaica_cluster <- cluster_raw |> filter(Entity == "Jamaica") |> pull(cluster)
+
+peer_countries <- cluster_raw |>
+  filter(cluster == jamaica_cluster) |>
+  select(Entity, life_expectancy, schooling_years, poverty_3usd)
+
+peer_countries
+```
+
+### Exercise 4: Hierarchical Clustering Dendrogram
+
+Run hierarchical clustering using `hclust()` with Euclidean distance and complete linkage, and plot the resulting dendrogram.
+
+``` r
+# EXERCISE 4: Hierarchical clustering dendrogram
+dist_matrix <- dist(scaled_matrix)
+hc_tree     <- hclust(dist_matrix, method = "complete")
+
+plot(hc_tree, cex = 0.6, main = "Dendrogram of Global Development Structures")
+```

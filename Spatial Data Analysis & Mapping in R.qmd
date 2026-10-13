@@ -45,14 +45,14 @@ countries_to_compare <- c(
 
 Welcome to Lab 2!
 
-In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries, and ecological zones heavily shape human development outcomes.
+In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries and ecological zones heavily shape human development outcomes.
 
 In this lab, we transition from time-series charts to **choropleth maps** (maps where geographical areas are coloured according to an underlying metric).
 
 ::: callout-note
 ### Learning Objectives
 
-By completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using `sf` and `rnaturalearth`. 2. Execute spatial joins (`left_join`) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using `ggplot2` and `geom_sf()`. 4. Apply cartographic projections suitable for global analysis.
+Upon completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using `sf` and `rnaturalearth`. 2. Execute spatial joins (`left_join`) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using `ggplot2` and `geom_sf()`. 4. Apply cartographic projections suitable for global analysis.
 :::
 
 ------------------------------------------------------------------------
@@ -82,7 +82,7 @@ glimpse(world_map |> select(name, iso_a3, continent, geometry))
 
 Because the Earth is a 3D sphere, flattening it onto a 2D screen requires a mathematical projection.
 
-The traditional **Mercator projection** distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political—it shapes how spatial scales are perceived.
+The traditional **Mercator projection** distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political. It shapes how spatial scales are perceived.
 :::
 
 ------------------------------------------------------------------------
@@ -91,7 +91,7 @@ The traditional **Mercator projection** distorts land area at high latitudes, vi
 
 ## Merging Geometries with Tabular Data
 
-We join our spatial `world_map` object with `life_expectancy_data.csv` using the 3-letter ISO country code (`iso_a3` in `sf` and `Code` in OWID).
+We can join our spatial `world_map` object with `life_expectancy_data.csv` using the 3-letter ISO country code (`iso_a3` in `sf` and `Code` in OWID).
 
 ```{r}
 #| label: join-health-data
@@ -150,7 +150,7 @@ ggplot(world_health_map) +
 
 # Module 3: Comparative Spatial Zoom — Regional Focus
 
-We filter our spatial dataset to examine intra-regional variance across **Latin America & Caribbean** and **Sub-Saharan Africa**.
+We can filter our spatial dataset to examine intra-regional variance across **Latin America & Caribbean** and **Sub-Saharan Africa**.
 
 ```{r}
 #| label: fig-regional-health-map

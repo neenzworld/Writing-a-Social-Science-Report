@@ -1,0 +1,332 @@
+---
+title: "Lab 4: Advanced Econometric Modeling — Panel Fixed Effects & Logistic Regression"
+subtitle: "Controlling for Unobserved Invariance & Modeling Development Vulnerability Traps"
+author: "Neena Abimbola Albarus"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    theme: flatly
+    code-fold: show
+    code-tools: true
+    fig-align: center
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# ==============================================================================
+# LECTURER SETUP & PACKAGES
+# ==============================================================================
+library(readr)     # For tabular CSV dataset importation
+library(dplyr)     # For data manipulation, pipeline transformation, and classification
+library(ggplot2)   # For advanced statistical visualisations
+library(broom)     # For tidying regression outputs into clean data frames
+library(fixest)    # For fast, publication-ready panel fixed-effects estimation (feols)
+
+# Central comparative country vector
+countries_to_compare <- c(
+  "Jamaica",
+  "Canada",
+  "United States",
+  "India",
+  "Brazil",
+  "Spain",
+  "Nigeria",
+  "South Africa"
+)
+```
+
+# Introduction: Capstone Modeling in Computational Social Science
+
+Welcome to Lab 4!
+
+Over the first three modules, you built an empirical toolkit: \* **Lab 1:** Panel data hygiene and time-series visualization. \* **Lab 2:** Spatial vector analysis and choropleth mapping. \* **Lab 3:** Cross-sectional Ordinary Least Squares (OLS) modeling and residual analysis.
+
+In this lab, we will tackle two major methodological challenges in comparative social science: 1. **Omitted Variable Bias across Time:** How do we isolate the true effect of policy variables when countries possess unique, unobserved baseline traits (e.g. geography, colonial institutional legacies)? 2. **Binary Structural Traps:** How do we model categorical outcomes, such as whether a nation becomes trapped in a state of **Severe Human Vulnerability**?
+
+::: callout-note
+### Learning Objectives
+
+By completing this workbook, you will learn how to: 1. Merge multi-year panel datasets across poverty, education, and health domains. 2. Estimate Pooled OLS vs. **Entity & Time Fixed-Effects Models** using `fixest::feols()`. 3. Conceptualize and execute **Binary Logistic Regression** using `glm(family = "binomial")`. 4. Convert log-odds coefficients into **Odds Ratios** and calculate **Predicted Probabilities** using `predict()`.
+:::
+
+------------------------------------------------------------------------
+
+# Part I: Panel Data & Fixed-Effects Regression
+
+## The Problem of Omitted Variable Bias
+
+In cross-sectional OLS (Lab 3), we estimated relationships at a single point in time. However, comparing countries at one point in time suffers from **Omitted Variable Bias**. Canada and Nigeria differ not only in education spending, but also in climate, post-colonial state architecture, and geography.
+
+If we run a naive "Pooled OLS" model across all countries and all years simultaneously, we treat every country-year observation as independent, ignoring country-specific baseline traits:
+
+$$\text{Life Expectancy}_{it} = \beta_0 + \beta_1 (\text{Schooling Years}_{it}) + \varepsilon_{it}$$
+
+### The Fixed-Effects Solution
+
+To isolate within-country changes over time, we introduce **Entity Fixed Effects** ($\alpha_i$) and **Time Fixed Effects** ($\gamma_t$):
+
+$$\text{Life Expectancy}_{it} = \beta_1 (\text{Schooling Years}_{it}) + \alpha_i + \gamma_t + \varepsilon_{it}$$
+
+- **Entity Fixed Effects (**$\alpha_i$): Controls for all time-invariant country characteristics (geography, historical institutions, baseline culture).
+- **Time Fixed Effects (**$\gamma_t$): Controls for global time shocks that affect all countries in a given year (e.g., the 2008 Financial Crisis, 2020 COVID-19 pandemic).
+
+------------------------------------------------------------------------
+
+## Building the Multi-Year Panel Dataset
+
+We can join our three panel datasets (`poverty_data.csv`, `education_data.csv`, `life_expectancy_data.csv`) across all years from 1990 onwards.
+
+```{r}
+#| label: construct-full-panel
+#| message: false
+#| warning: false
+
+# Step A: Load raw datasets using root relative paths
+poverty_panel <- read_csv("data/poverty_data.csv") |>
+  rename(poverty_3usd = `Share of population in poverty ($3 a day)`) |>
+  select(Entity, Code, Year, poverty_3usd)
+
+edu_panel <- read_csv("data/education_data.csv") |>
+  rename(schooling_years = 4) |>
+  select(Entity, Code, Year, schooling_years)
+
+life_panel <- read_csv("data/life_expectancy_data.csv") |>
+  rename(life_expectancy = 4) |>
+  select(Entity, Code, Year, life_expectancy)
+
+# Step B: Multi-way panel join
+panel_data <- life_panel |>
+  inner_join(edu_panel, by = c("Entity", "Code", "Year")) |>
+  inner_join(poverty_panel, by = c("Entity", "Code", "Year")) |>
+  filter(Year >= 1990) |>
+  filter(!is.na(life_expectancy), !is.na(schooling_years), !is.na(poverty_3usd)) |>
+  arrange(Entity, Year)
+
+# Inspect clean panel structure
+head(panel_data)
+```
+
+------------------------------------------------------------------------
+
+## Estimating Pooled OLS vs. Two-Way Fixed Effects
+
+We can use the `feols()` function from the `fixest` package to fit three competing panel specifications:
+
+1.  **Model 1 (Pooled OLS):** Ignores panel structure.
+2.  **Model 2 (Entity Fixed Effects):** Controls for fixed country-level baseline differences (`| Entity`).
+3.  **Model 3 (Two-Way Fixed Effects - TWFE):** Controls for both country traits and global year shocks (`| Entity + Year`).
+
+```{r}
+#| label: fit-panel-models
+
+# Model 1: Naive Pooled OLS
+m1_pooled <- feols(life_expectancy ~ schooling_years + poverty_3usd, data = panel_data)
+
+# Model 2: Entity Fixed Effects
+m2_entity_fe <- feols(life_expectancy ~ schooling_years + poverty_3usd | Entity, data = panel_data)
+
+# Model 3: Two-Way Fixed Effects (Entity + Year)
+m3_twfe <- feols(life_expectancy ~ schooling_years + poverty_3usd | Entity + Year, data = panel_data)
+
+# Compare model estimates side-by-side
+etable(m1_pooled, m2_entity_fe, m3_twfe, headers = c("Pooled OLS", "Entity FE", "Two-Way FE"))
+```
+
+::: callout-note
+### Key Pedagogical Takeaway
+
+Notice how the coefficient on `schooling_years` changes when moving from Pooled OLS to Two-Way Fixed Effects! Pooled OLS reflects *between-country* differences, whereas Two-Way Fixed Effects measures *within-country trajectories* over time after stripping away national baseline inequalities and global external shocks.
+:::
+
+------------------------------------------------------------------------
+
+# Part II: Binary Logistic Regression & Vulnerability Traps
+
+## Conceptualizing Categorical Outcomes in Social Science
+
+In social policy and public health, outcomes are often binary: \* Is a household above or below the poverty line? ($1$ vs $0$) \* Is a nation experiencing a **Severe Development Vulnerability Trap**? ($1$ vs $0$)
+
+Ordinary Least Squares (OLS) fails for binary outcomes because it predicts values below $0$ or above $1$. Instead, we use **Binary Logistic Regression** (Generalized Linear Model with a `binomial` family link function).
+
+### The Logit Model Equation
+
+$$\ln\left(\frac{p_i}{1 - p_i}\right) = \beta_0 + \beta_1 (\text{Schooling Years}_i) + \beta_2 (\text{Poverty Rate}_i)$$
+
+Where $\frac{p_i}{1 - p_i}$ represents the **Odds Ratio** of being in a vulnerability trap.
+
+------------------------------------------------------------------------
+
+## Operationalizing the Binary Dependent Variable
+
+We construct a binary outcome variable: `vulnerability_trap`. We define a country-year observation as being in a **vulnerability trap** ($1$) if its life expectancy falls below **65 years**, and ($0$) otherwise.
+
+```{r}
+#| label: construct-binary-variable
+
+# Construct binary indicator variable
+logit_data <- panel_data |>
+  mutate(vulnerability_trap = if_else(life_expectancy < 65, 1, 0))
+
+# Check category distribution
+table(logit_data$vulnerability_trap)
+```
+
+------------------------------------------------------------------------
+
+## Fitting the Logistic Regression Model (`glm`)
+
+We fit a logistic regression model predicting the probability of falling into a vulnerability trap based on educational stock (`schooling_years`) and extreme poverty rates (`poverty_3usd`).
+
+```{r}
+#| label: fit-logistic-model
+
+# Fit logistic model using glm()
+logit_model <- glm(
+  vulnerability_trap ~ schooling_years + poverty_3usd, 
+  data = logit_data, 
+  family = binomial(link = "logit")
+)
+
+# Output raw log-odds coefficients
+summary(logit_model)
+```
+
+------------------------------------------------------------------------
+
+## Converting Log-Odds to Odds Ratios ($e^\beta$)
+
+Raw logistic coefficients are expressed in **log-odds**, which are hard to interpret. By exponentiating the coefficients ($\exp(\beta)$), we convert them into **Odds Ratios**:
+
+- **Odds Ratio \> 1:** Increases the likelihood of falling into the vulnerability trap.
+- **Odds Ratio \< 1:** Decreases the likelihood of falling into the vulnerability trap (protective factor).
+
+```{r}
+#| label: calculate-odds-ratios
+
+# Extract tidied model frame with Odds Ratios and 95% Confidence Intervals
+logit_odds <- tidy(logit_model, exponentiate = TRUE, conf.int = TRUE)
+
+logit_odds |>
+  select(term, estimate, conf.low, conf.high, p.value)
+```
+
+::: callout-important
+### Interpreting Odds Ratios
+
+An Odds Ratio of **0.65** on `schooling_years` means that for every additional year of average schooling accumulated by an adult population, the odds of that nation being trapped in severe health vulnerability decrease by **35%** ($1 - 0.65$), holding poverty constant.
+:::
+
+------------------------------------------------------------------------
+
+## Visualising Predicted Probabilities
+
+We use `predict()` to generate non-linear S-curves (sigmoidal curves) showing how the predicted probability of a vulnerability trap declines as average schooling increases across different poverty settings.
+
+```{r}
+#| label: fig-predicted-probabilities
+#| fig-cap: "Figure 1: Predicted probability of national health vulnerability trap across levels of educational attainment."
+#| message: false
+#| warning: false
+#| fig-width: 9
+#| fig-height: 5.5
+
+# Step A: Create hypothetical grid of values for prediction
+prediction_grid <- expand.grid(
+  schooling_years = seq(1, 14, length.out = 100),
+  poverty_3usd    = c(5, 25, 50) # Low, Medium, and High Poverty Scenarios
+)
+
+# Step B: Generate predicted probabilities using the logit link
+prediction_grid$pred_prob <- predict(
+  logit_model, 
+  newdata = prediction_grid, 
+  type = "response"
+)
+
+# Step C: Plot sigmoidal curve in ggplot2
+ggplot(prediction_grid, aes(x = schooling_years, y = pred_prob, color = as.factor(poverty_3usd))) +
+  geom_line(linewidth = 1.2) +
+  scale_color_brewer(palette = "Set1", name = "Poverty Rate ($3/day)") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(
+    title = "Predicted Probability of Development Vulnerability Trap (Life Exp < 65)",
+    subtitle = "Logistic regression S-curves across varying poverty and human capital thresholds",
+    x = "Mean Years of Schooling (Adults 15+)",
+    y = "Predicted Probability of Vulnerability Trap (%)",
+    caption = "Source: Author's calculation using OWID datasets."
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold")
+  )
+```
+
+------------------------------------------------------------------------
+
+# Student Coding Lab Exercises
+
+Complete these four exercises in your R Console or script to master panel and logistic workflows!
+
+### Exercise 1: Extracting Country Fixed Effects
+
+Extract the estimated country-specific baseline intercepts ($\alpha_i$) from Model 2 (`m2_entity_fe`) using `fixest::fixef()`. Identify which country has the highest baseline health advantage after controlling for education and poverty.
+
+``` r
+# EXERCISE 1: Extract and inspect entity fixed effects
+fixed_effects <- fixef(m2_entity_fe)
+summary(fixed_effects)
+```
+
+### Exercise 2: Alternative Logistic Threshold
+
+Re-define `vulnerability_trap` using a life expectancy cutoff of **70 years** instead of 65 years. Refit `logit_model2` and calculate the new Odds Ratios.
+
+``` r
+# EXERCISE 2: Refit logit model with 70-year threshold
+logit_data_70 <- panel_data |>
+  mutate(vulnerability_trap_70 = if_else(life_expectancy < 70, 1, 0))
+
+logit_model_70 <- glm(
+  vulnerability_trap_70 ~ schooling_years + poverty_3usd, 
+  data = logit_data_70, 
+  family = binomial
+)
+
+tidy(logit_model_70, exponentiate = TRUE, conf.int = TRUE)
+```
+
+### Exercise 3: Confusion Matrix & Classification Accuracy
+
+Generate predicted class labels ($0$ or $1$) using a cutoff probability of **0.50**. Construct a $2 \times 2$ Confusion Matrix comparing actual vulnerability status against predicted vulnerability status.
+
+``` r
+# EXERCISE 3: Model confusion matrix
+logit_data <- logit_data |>
+  mutate(
+    pred_prob  = predict(logit_model, type = "response"),
+    pred_class = if_else(pred_prob > 0.50, 1, 0)
+  )
+
+# Confusion Matrix
+table(Actual = logit_data$vulnerability_trap, Predicted = logit_data$pred_class)
+```
+
+### Exercise 4: Comparative Case Highlight
+
+Filter `logit_data` for our eight comparative country cases in the year **2019**. Display a summary table showing their actual life expectancy, vulnerability status ($0$ or $1$), and model-predicted probability (`pred_prob`).
+
+``` r
+# EXERCISE 4: Predicted probabilities for comparative cases (2019)
+case_predictions_2019 <- logit_data |>
+  filter(Year == 2019, Entity %in% countries_to_compare) |>
+  select(Entity, Year, life_expectancy, poverty_3usd, schooling_years, vulnerability_trap, pred_prob) |>
+  arrange(desc(pred_prob))
+
+case_predictions_2019
+```

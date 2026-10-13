@@ -352,43 +352,131 @@ display: none;
 </div>
 
 
-<div id="social-science-report-in-r-a-computational-workbook" class="section level1">
-<h1>Social Science Report in R: A Computational Workbook</h1>
-<p><a href="https://www.r-project.org/"><img role="img" aria-label="R" src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSIyMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJSOiA0LngiPjx0aXRsZT5SOiA0Lng8L3RpdGxlPjxmaWx0ZXIgaWQ9ImJsdXIiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjE2Ii8+PC9maWx0ZXI+PGxpbmVhckdyYWRpZW50IGlkPSJzIiB4Mj0iMCIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2JiYiIgc3RvcC1vcGFjaXR5PSIuMSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJyIj48cmVjdCB3aWR0aD0iNDQiIGhlaWdodD0iMjAiIHJ4PSIzIi8+PC9jbGlwUGF0aD48ZyBjbGlwLXBhdGg9InVybCgjcikiPjxyZWN0IHdpZHRoPSIxNyIgaGVpZ2h0PSIyMCIgZmlsbD0iIzU1NSIvPjxyZWN0IHg9IjE3IiB3aWR0aD0iMjciIGhlaWdodD0iMjAiIGZpbGw9IiMwMDdlYzYiLz48cmVjdCB3aWR0aD0iNDQiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjcykiLz48L2c+PGcgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlZlcmRhbmEsR2VuZXZhLERlamFWdSBTYW5zLHNhbnMtc2VyaWYiIHRleHQtcmVuZGVyaW5nPSJnZW9tZXRyaWNQcmVjaXNpb24iIGZvbnQtc2l6ZT0iMTEwIj48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9Ijk1IiB5PSIxNTAiIGZpbGwtb3BhY2l0eT0iLjgiIGZpbHRlcj0idXJsKCNibHVyKSIgdGV4dExlbmd0aD0iNzAiPlI8L3RleHQ+PHRleHQgeD0iOTUiIHk9IjE1MCIgZmlsbC1vcGFjaXR5PSIuMyIgdGV4dExlbmd0aD0iNzAiPlI8L3RleHQ+PC9nPjx0ZXh0IHg9Ijk1IiB5PSIxNDAiIHRleHRMZW5ndGg9IjcwIj5SPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9IjI5NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii44IiBmaWx0ZXI9InVybCgjYmx1cikiIHRleHRMZW5ndGg9IjE3MCI+NC54PC90ZXh0Pjx0ZXh0IHg9IjI5NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii4zIiB0ZXh0TGVuZ3RoPSIxNzAiPjQueDwvdGV4dD48L2c+PHRleHQgeD0iMjk1IiB5PSIxNDAiIHRleHRMZW5ndGg9IjE3MCI+NC54PC90ZXh0PjwvZz48L2c+PC9zdmc+" alt="R" /></a> <a href="https://quarto.org/"><img role="img" aria-label="Quarto" src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3NCIgaGVpZ2h0PSIyMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJRdWFydG86IDEueCI+PHRpdGxlPlF1YXJ0bzogMS54PC90aXRsZT48ZmlsdGVyIGlkPSJibHVyIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIxNiIvPjwvZmlsdGVyPjxsaW5lYXJHcmFkaWVudCBpZD0icyIgeDI9IjAiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNiYmIiIHN0b3Atb3BhY2l0eT0iLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3Atb3BhY2l0eT0iLjEiLz48L2xpbmVhckdyYWRpZW50PjxjbGlwUGF0aCBpZD0iciI+PHJlY3Qgd2lkdGg9Ijc0IiBoZWlnaHQ9IjIwIiByeD0iMyIvPjwvY2xpcFBhdGg+PGcgY2xpcC1wYXRoPSJ1cmwoI3IpIj48cmVjdCB3aWR0aD0iNDciIGhlaWdodD0iMjAiIGZpbGw9IiM1NTUiLz48cmVjdCB4PSI0NyIgd2lkdGg9IjI3IiBoZWlnaHQ9IjIwIiBmaWxsPSJwdXJwbGUiLz48cmVjdCB3aWR0aD0iNzQiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjcykiLz48L2c+PGcgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlZlcmRhbmEsR2VuZXZhLERlamFWdSBTYW5zLHNhbnMtc2VyaWYiIHRleHQtcmVuZGVyaW5nPSJnZW9tZXRyaWNQcmVjaXNpb24iIGZvbnQtc2l6ZT0iMTEwIj48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9IjI0NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii44IiBmaWx0ZXI9InVybCgjYmx1cikiIHRleHRMZW5ndGg9IjM3MCI+UXVhcnRvPC90ZXh0Pjx0ZXh0IHg9IjI0NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii4zIiB0ZXh0TGVuZ3RoPSIzNzAiPlF1YXJ0bzwvdGV4dD48L2c+PHRleHQgeD0iMjQ1IiB5PSIxNDAiIHRleHRMZW5ndGg9IjM3MCI+UXVhcnRvPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9IjU5NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii44IiBmaWx0ZXI9InVybCgjYmx1cikiIHRleHRMZW5ndGg9IjE3MCI+MS54PC90ZXh0Pjx0ZXh0IHg9IjU5NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii4zIiB0ZXh0TGVuZ3RoPSIxNzAiPjEueDwvdGV4dD48L2c+PHRleHQgeD0iNTk1IiB5PSIxNDAiIHRleHRMZW5ndGg9IjE3MCI+MS54PC90ZXh0PjwvZz48L2c+PC9zdmc+" alt="Quarto" /></a> <a href="https://opensource.org/licenses/MIT"><img role="img" aria-label="License: MIT" src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MiIgaGVpZ2h0PSIyMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMaWNlbnNlOiBNSVQiPjx0aXRsZT5MaWNlbnNlOiBNSVQ8L3RpdGxlPjxmaWx0ZXIgaWQ9ImJsdXIiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjE2Ii8+PC9maWx0ZXI+PGxpbmVhckdyYWRpZW50IGlkPSJzIiB4Mj0iMCIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2JiYiIgc3RvcC1vcGFjaXR5PSIuMSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1vcGFjaXR5PSIuMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJyIj48cmVjdCB3aWR0aD0iODIiIGhlaWdodD0iMjAiIHJ4PSIzIi8+PC9jbGlwUGF0aD48ZyBjbGlwLXBhdGg9InVybCgjcikiPjxyZWN0IHdpZHRoPSI1MSIgaGVpZ2h0PSIyMCIgZmlsbD0iIzU1NSIvPjxyZWN0IHg9IjUxIiB3aWR0aD0iMzEiIGhlaWdodD0iMjAiIGZpbGw9IiNkOGI4MDAiLz48cmVjdCB3aWR0aD0iODIiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjcykiLz48L2c+PGcgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlZlcmRhbmEsR2VuZXZhLERlamFWdSBTYW5zLHNhbnMtc2VyaWYiIHRleHQtcmVuZGVyaW5nPSJnZW9tZXRyaWNQcmVjaXNpb24iIGZvbnQtc2l6ZT0iMTEwIj48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9IjI2NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii44IiBmaWx0ZXI9InVybCgjYmx1cikiIHRleHRMZW5ndGg9IjQxMCI+TGljZW5zZTwvdGV4dD48dGV4dCB4PSIyNjUiIHk9IjE1MCIgZmlsbC1vcGFjaXR5PSIuMyIgdGV4dExlbmd0aD0iNDEwIj5MaWNlbnNlPC90ZXh0PjwvZz48dGV4dCB4PSIyNjUiIHk9IjE0MCIgdGV4dExlbmd0aD0iNDEwIj5MaWNlbnNlPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC4xKSI+PGcgYXJpYS1oaWRkZW49InRydWUiIGZpbGw9IiMwMTAxMDEiPjx0ZXh0IHg9IjY1NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii44IiBmaWx0ZXI9InVybCgjYmx1cikiIHRleHRMZW5ndGg9IjIxMCI+TUlUPC90ZXh0Pjx0ZXh0IHg9IjY1NSIgeT0iMTUwIiBmaWxsLW9wYWNpdHk9Ii4zIiB0ZXh0TGVuZ3RoPSIyMTAiPk1JVDwvdGV4dD48L2c+PHRleHQgeD0iNjU1IiB5PSIxNDAiIHRleHRMZW5ndGg9IjIxMCI+TUlUPC90ZXh0PjwvZz48L2c+PC9zdmc+" alt="License: MIT" /></a></p>
-<p>An open-source, reproducible computational workbook designed for
-beginning social science students and researchers learning quantitative
-data processing and visualization in R.</p>
-<p>Using open data from <strong>Our World in Data</strong> (World Bank,
-Barro-Lee, UN WPP), this repository demonstrates how to filter, clean,
-transform, join, and visualize developmental indicators across eight
-comparative country cases without relying on static spreadsheets.</p>
+<div id="quantitative-political-economy-computational-pedagogy-series" class="section level1">
+<h1>Quantitative Political Economy &amp; Computational Pedagogy
+Series</h1>
+<p>A computational pedagogy series using <strong>R</strong>,
+<strong>Quarto</strong>, and <strong>Tidyverse</strong> to analyze
+international human development, poverty dynamics and population
+health.</p>
+<p>Designed for social science students, this curriculum combines
+rigorous data hygiene, spatial analysis, econometric modeling and
+machine learning while maintaining my Global South lens.</p>
 <hr />
-<div id="target-cases-development-indicators" class="section level2">
-<h2>📌 Target Cases &amp; Development Indicators</h2>
-<p>The workbook examines panel data from <strong>1990 to
-Present</strong> across eight diverse national economies:</p>
+<div id="comparative-case-studies" class="section level2">
+<h2>Comparative Case Studies</h2>
+<p>While analyzing global trends, the labs pay special empirical
+attention to eight comparative nations: * <strong>Global North:</strong>
+Canada, United States, Spain * <strong>Global South:</strong> Jamaica,
+Brazil, India, Nigeria, South Africa</p>
+<hr />
+</div>
+<div id="lab-curriculum-overview" class="section level2">
+<h2>Lab Curriculum Overview</h2>
+<p>The sequence spans five hands-on computational workbooks:</p>
+<div id="lab-1-data-hygiene-tidy-pipelines-time-series" class="section level3">
+<h3><a href="reports/research-report.qmd">Lab 1: Data Hygiene, Tidy
+Pipelines &amp; Time-Series</a></h3>
 <ul>
-<li><strong>Target Countries:</strong> Jamaica, Canada, United States,
-India, Brazil, Spain, Nigeria, and South Africa.</li>
-<li><strong>Module 1 (Poverty):</strong> Extreme poverty rates living on
-less than $3.00/day (PPP adjusted).</li>
-<li><strong>Module 2 (Education):</strong> Mean years of formal
-schooling completed by adults aged 15+.</li>
-<li><strong>Module 3 (Health):</strong> Period life expectancy at birth
-in years.</li>
+<li><strong>Focus:</strong> Data wrangling, stock vs. flow metrics,
+handling missingness by design, and panel visualizations.</li>
+<li><strong>Methods:</strong> Multi-way relational joins
+(<code>inner_join</code>), long/wide transformations, and panel trend
+graphs.</li>
+<li><strong>Key Concept:</strong> Distinguishing structural development
+trends from temporary macro-shocks (2008 Financial Crisis, 2020 COVID
+shock).</li>
+</ul>
+</div>
+<div id="lab-2-spatial-analysis-vector-mapping" class="section level3">
+<h3><a href="lab-2-maps.qmd">Lab 2: Spatial Analysis &amp; Vector
+Mapping</a></h3>
+<ul>
+<li><strong>Focus:</strong> Geographic data structures, spatial joins,
+cartographic projections, and choropleths.</li>
+<li><strong>Methods:</strong> Geospatial manipulation with
+<code>sf</code>, spatial joining (<code>st_join</code>), Equal Earth
+projections, and <code>viridis</code> color scales.</li>
+<li><strong>Key Concept:</strong> Cartographic ethics and mapping
+spatial inequality across Global South regions without map projection
+distortion.</li>
+</ul>
+</div>
+<div id="lab-3-cross-sectional-modeling-the-preston-curve" class="section level3">
+<h3><a href="lab-3-modeling.qmd">Lab 3: Cross-Sectional Modeling &amp;
+The Preston Curve</a></h3>
+<ul>
+<li><strong>Focus:</strong> Bivariate linear/logarithmic regression,
+goodness-of-fit evaluation, and residual analysis.</li>
+<li><strong>Methods:</strong> Ordinary Least Squares (<code>lm</code>),
+model tidying (<code>broom::tidy</code>, <code>glance</code>), and
+residual extraction (<code>augment</code>).</li>
+<li><strong>Key Concept:</strong> Testing the Preston Curve—evaluating
+positive health outliers (nations overperforming their economic
+baselines) vs. negative outliers.</li>
+</ul>
+</div>
+<div id="lab-4-advanced-econometric-modeling-panel-fixed-effects-logit" class="section level3">
+<h3><a href="lab-4-advanced-models.qmd">Lab 4: Advanced Econometric
+Modeling — Panel Fixed Effects &amp; Logit</a></h3>
+<ul>
+<li><strong>Focus:</strong> Panel data fixed effects and binary outcome
+modeling for structural poverty traps.</li>
+<li><strong>Methods:</strong> Two-Way Fixed Effects
+(<code>fixest::feols</code>), Logistic Regression (<code>glm</code>),
+Odds Ratios (<span class="math inline">\(\exp(\beta)\)</span>), and
+predicted probability S-curves.</li>
+<li><strong>Key Concept:</strong> Eliminating time-invariant omitted
+variable bias (geography, colonial institutional legacies) and
+calculating vulnerability probabilities.</li>
+</ul>
+</div>
+<div id="lab-5-computational-typologies-pca-unsupervised-clustering" class="section level3">
+<h3><a href="lab-5-unsupervised-learning.qmd">Lab 5: Computational
+Typologies — PCA &amp; Unsupervised Clustering</a></h3>
+<ul>
+<li><strong>Focus:</strong> Feature standardisation, dimensionality
+reduction, and unsupervised machine learning.</li>
+<li><strong>Methods:</strong> <span class="math inline">\(Z\)</span>-score scaling (<code>scale</code>),
+Principal Component Analysis (<code>prcomp</code>), PCA biplots, and
+<span class="math inline">\(k\)</span>-Means Clustering
+(<code>kmeans</code>).</li>
+<li><strong>Key Concept:</strong> Moving beyond rigid “North vs. South”
+binaries to discover data-driven country typologies and structural
+middle-income heterogeneity.</li>
 </ul>
 <hr />
 </div>
-<div id="repository-structure" class="section level2">
-<h2>📁 Repository Structure</h2>
-<p>```text social-science-report-template/ ├── data/ # Local raw CSV
-datasets imported from OWID │ ├── poverty_data.csv │ ├──
-education_data.csv │ └── life_expectancy_data.csv ├── outputs/ # Output
-directory for exported figures &amp; tables │ ├── figures/ │ └── tables/
-├── reports/ # Quarto source documents │ └── research-report.qmd #
-Master computational workbook ├── README.md # Repository overview and
-setup instructions └── social-science-report-template.Rproj # RStudio
-Project File</p>
+</div>
+<div id="technical-stack-packages" class="section level2">
+<h2>Technical Stack &amp; Packages</h2>
+<ul>
+<li><strong>Core R Infrastructure:</strong> <code>tidyverse</code>
+(<code>dplyr</code>, <code>ggplot2</code>, <code>readr</code>,
+<code>tidyr</code>, <code>purrr</code>)</li>
+<li><strong>Spatial Analytics:</strong> <code>sf</code>,
+<code>rnaturalearth</code>, <code>rnaturalearthdata</code>,
+<code>viridis</code></li>
+<li><strong>Econometrics &amp; Modeling:</strong> <code>broom</code>,
+<code>fixest</code>, <code>ggrepel</code></li>
+<li><strong>Machine Learning:</strong> Base R <code>prcomp</code>,
+<code>kmeans</code>, <code>stats</code></li>
+<li><strong>Publishing Engine:</strong> <a href="https://quarto.org/">Quarto</a> (<code>.qmd</code>) compiled to
+responsive HTML</li>
+</ul>
+<hr />
+</div>
+<div id="repository-data-architecture" class="section level2">
+<h2>Repository &amp; Data Architecture</h2>
+<p>```text ├── data/ │ ├── poverty_data.csv # OWID / World Bank PIP
+headcount poverty ($3/day) │ ├── education_data.csv # OWID Mean Years of
+Schooling (Adults 15+) │ └── life_expectancy_data.csv # OWID Life
+Expectancy at birth ├── reports/ │ └── research-report.qmd # Lab 1
+Quarto Document ├── lab-2-maps.qmd # Lab 2 Quarto Document ├──
+lab-3-modeling.qmd # Lab 3 Quarto Document ├── lab-4-advanced-models.qmd
+# Lab 4 Quarto Document ├── lab-5-unsupervised-learning.qmd # Lab 5
+Quarto Document └── README.md # Curriculum Overview &amp;
+Documentation</p>
 </div>
 </div>
 
