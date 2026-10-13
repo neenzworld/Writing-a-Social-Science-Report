@@ -6,28 +6,22 @@ format:
   html:
     toc: true
     toc-depth: 3
+    toc-location: left
     number-sections: true
-    theme: cosmo
-    code-fold: false
+    theme: flatly
+    code-fold: show
+    code-tools: true
+    fig-align: center
 ---
 
 ```{r}
 #| label: setup
 #| include: false
 
-# ==============================================================================
-# LECTURER SETUP & PACKAGES
-# ==============================================================================
-# In computational social science, we prioritise reproducibility over manual edits.
-# Excel spreadsheets allow unrecorded clicks that make auditing impossible. 
-# R scripts document every data transformation explicitly so anyone can double-check our work.
-
 library(readr)   # For importing tabular CSV datasets into memory
 library(dplyr)   # For data manipulation, filtering, and aggregation
 library(ggplot2) # For constructing publication-ready visualizations
 
-# Central parameter vector defining our eight comparative country cases.
-# Storing these in a single object keeps our analysis consistent across all modules.
 countries_to_compare <- c(
   "Jamaica",
   "Canada",
@@ -64,9 +58,11 @@ While working through this document, you will learn how to inspect raw data file
 
 Before writing any code, let us break down how quantitative research works. Social scientists separate measurement into two key steps:
 
-* **Conceptualisation** 
+- **Conceptualisation** 
+
 Defining the theoretical idea we want to study (e.g., "material poverty").
-* **Operationalisation** 
+- **Operationalisation** 
+
 Choosing the exact numerical metric we will use to measure that idea in the real world.
 
 To compare poverty across international borders, we cannot simply measure household income in local currencies. A household earning 500,000 Nigerian Naira per month experiences a completely different standard of living than one earning 500,000 Jamaican Dollars or 500,000 Indian Rupees. 
@@ -83,7 +79,7 @@ Let us start by loading our raw CSV dataset into R using the `read_csv()` functi
 
 ```{r}
 # Read raw poverty dataset into an R object named poverty_data
-poverty_data <- read_csv("/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/poverty_data.csv")
+poverty_data <- read_csv("../data/poverty_data.csv")
 ```
 
 ---
@@ -102,6 +98,7 @@ glimpse(poverty_data)
 Take a look at the labels next to each column name in the output above. In R, every variable has a data type (or class), which tells R what you are allowed to do with it:
 
 1. **`chr` (Character)** 
+
 Text strings. In our dataset, `Entity` and `Code` are character variables. You cannot do maths on character data!
 2. **`dbl` (Double) or `int` (Integer)** 
 Numbers. `dbl` holds decimal numbers and `int` holds whole numbers. In our dataset, `Year` and the poverty percentage column are numeric.
@@ -145,9 +142,11 @@ Look at the summary table from Audit 2. Notice how the amount of missing data va
 
 In social science, missing data is rarely random:
 
-* **Missingness by Design** 
+- **Missingness by Design** 
+
 Wealthier nations like Canada and the United States show lots of missing observations at the $3.00/day poverty line. This is not a mistake! Statistical agencies in rich countries do not field household surveys for extreme absolute poverty because absolute deprivation falls below measurable survey thresholds there.
-* **Structural Capacity & Fiscal Constraints** 
+- **Structural Capacity & Fiscal Constraints** 
+
 Developing nations in the Global South often have multi-year gaps between survey points. National household censuses are expensive and logistically demanding. Foreign debt servicing, structural adjustment programmes and fiscal austerity frequently constrain state statistical offices in post-colonial economies, limiting their capacity to run annual household surveys.
 
 ---
@@ -218,6 +217,7 @@ ggplot(
 Take a close look at Figure 1.We can examine underlying structural conditions:
 
 1. **Floor Effects & Western-Centric Metrics** 
+
 Notice how Canada and the United States flatline at $0\%$. This demonstrates a **measurement floor effect**. The $3/day line is built to measure global absolute deprivation and fails to reflect relative poverty, precarious labour, or systemic inequality in the Global North.
 2. **State-Led Interventions vs. Global Market Vulnerability** 
 Compare the steep poverty declines in **India** and **Brazil** against the more persistent rates in **Nigeria** and **Jamaica**:
@@ -237,8 +237,10 @@ In public policy and economics, education is viewed as an investment in **human 
 
 When looking at education metrics, social scientists divide them into two categories:
 
-* **Flow Metrics-** Measures of current participation (e.g. primary school enrollment rates this year). Flow metrics change quickly when policies change, but they do not tell you the skill level of the overall adult workforce.
-* **Stock Metrics-** Measures of total accumulated education over time (e.g. average years of schooling completed by adults aged 15+). Stock metrics change slowly because they reflect decades of historic educational investment.
+- **Flow Metrics-** Measures of current participation (e.g. primary school enrollment rates this year). Flow metrics change quickly when policies change, but they do not tell you the skill level of the overall adult workforce.
+
+- **Stock Metrics-** Measures of total accumulated education over time (e.g. average years of schooling completed by adults aged 15+). Stock metrics change slowly because they reflect decades of historic educational investment.
+
 
 In this module, we will analyse **Mean Years of Schooling** (a stock metric) to examine long-term human capital accumulation.
 
@@ -250,7 +252,7 @@ Public datasets often come with long and messy column headers that include space
 
 ```{r}
 # Import education dataset
-education_data <- read_csv("/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/education_data.csv")
+education_data <- read_csv("../data/education_data.csv")
 
 # Clean education data
 education_countries <- education_data |>
@@ -307,6 +309,7 @@ ggplot(
 Check out the educational trajectories displayed in Figure 2:
 
 1. **Colonial Legacies & Baseline Inequality** 
+
 Notice the substantial initial gap in 1990 between post-industrial economies (Canada, United States) and post-colonial societies (India, Nigeria, South Africa, Jamaica). Colonial-era educational systems were often extractive and restrictive, moreso designed to train minor administrative staff rather than foster broad-based national human capital. What might the purpose of education in your region be now?
 2. **Post-Colonial Educational Expansion** 
 Despite historical disadvantages, Global South nations demonstrate steady, upward educational expansion post-1990. State-funded initiatives, global campaigns like the Millennium Development Goals (MDGs) and domestic investments have expanded access to schooling across Latin America, South Asia, and Sub-Saharan Africa.
@@ -334,7 +337,7 @@ In comparative politics and development sociology, life expectancy is considered
 
 ```{r}
 # Import life expectancy dataset
-life_exp_data <- read_csv("/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/life_expectancy_data.csv")
+life_exp_data <- read_csv("../data/life_expectancy_data.csv")
 
 # Clean life expectancy data
 life_exp_countries <- life_exp_data |>
@@ -390,6 +393,7 @@ ggplot(
 Figure 3 highlights how global health inequities and external mortality shocks manifest in population data:
 
 1. **The HIV/AIDS Crisis in South Africa & Global Health Inequity** 
+
 Look at South Africa's line between 1990 and 2005, where life expectancy plummeted from ~63 years down to ~53 years. This catastrophic drop reflects the HIV/AIDS epidemic. Crucially, from a Global South analytical perspective, the delayed recovery was exacerbated by international patent restrictions and high pricing on antiretroviral drugs by Western pharmaceutical corporations. The rapid recovery post-2005 demonstrates the power of state-provided generic antiretroviral therapy and global health solidarity.
 2. **Global Vaccine Equity & the COVID-19 Shock (2020–2021)** 
 Notice the downturn across nations in 2020–2021. While COVID-19 impacted mortality globally, the capacity to rebound differed sharply. Wealthier Global North states hoarded vaccine supplies early in the pandemic, while Global South states faced severe supply chain delays, intellectual property barriers (TRIPS waiver debates) and fiscal limits in supporting health systems during acute crises.

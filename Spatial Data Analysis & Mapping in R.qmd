@@ -1,0 +1,255 @@
+---
+title: "Lab 2: Spatial Data Analysis & Mapping in R"
+subtitle: "Visualising Regional Inequalities & Development Patterns Across the Global South"
+author: "Neena Abimbola Albarus"
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    theme: flatly
+    code-fold: show
+    code-tools: true
+    fig-align: center
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# ==============================================================================
+# LECTURER SETUP & PACKAGES
+# ==============================================================================
+library(readr)          # For importing CSV datasets
+library(dplyr)          # For data manipulation and filtering
+library(ggplot2)        # For graphic grammar and plotting
+library(sf)             # For Simple Features spatial data handling
+library(rnaturalearth)  # For fetching vector map boundaries
+library(viridis)        # For accessible, colorblind-friendly color palettes
+
+# Central comparative country vector
+countries_to_compare <- c(
+  "Jamaica",
+  "Canada",
+  "United States",
+  "India",
+  "Brazil",
+  "Spain",
+  "Nigeria",
+  "South Africa"
+)
+```
+
+# Introduction: Spatial Analysis in Social Science
+
+Welcome to Lab 2!
+
+In Lab 1, we examined development indicators across time using panel line graphs. However, national development is not evenly distributed across space. Geographic proximity, regional trade blocs, historical colonial boundaries, and ecological zones heavily shape human development outcomes.
+
+In this lab, we transition from time-series charts to **choropleth maps** (maps where geographical areas are coloured according to an underlying metric).
+
+::: callout-note
+### Learning Objectives
+
+By completing this workbook, you will learn how to: 1. Load spatial vector data (country boundaries) using `sf` and `rnaturalearth`. 2. Execute spatial joins (`left_join`) combining map geometries with tabular OWID datasets. 3. Render choropleth maps using `ggplot2` and `geom_sf()`. 4. Apply cartographic projections suitable for global analysis.
+:::
+
+------------------------------------------------------------------------
+
+# Module 1: Fetching Spatial Geometries & Projections
+
+## Spatial Data in R: Simple Features (`sf`)
+
+In GIS (Geographic Information Systems), spatial data consists of: \* **Attributes:** The tabular numerical metrics (e.g., life expectancy in years). \* **Geometries:** Coordinates defining lines and polygons that draw borders on a map.
+
+In R, the `sf` package stores geometries inside a dedicated column named `geometry`.
+
+```{r}
+#| label: load-world-map
+#| message: false
+#| warning: false
+
+# Fetch medium-resolution world country map geometries
+world_map <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Inspect spatial dataframe structure
+glimpse(world_map |> select(name, iso_a3, continent, geometry))
+```
+
+::: callout-important
+### Cartographic Projections & Northern Bias
+
+Because the Earth is a 3D sphere, flattening it onto a 2D screen requires a mathematical projection.
+
+The traditional **Mercator projection** distorts land area at high latitudes, visually expanding North America and Europe while shrinking Africa, South America, and South Asia. From a Global South perspective, projection choice is inherently political—it shapes how spatial scales are perceived.
+:::
+
+------------------------------------------------------------------------
+
+# Module 2: Mapping Global Health Inequalities
+
+## Merging Geometries with Tabular Data
+
+We join our spatial `world_map` object with `life_expectancy_data.csv` using the 3-letter ISO country code (`iso_a3` in `sf` and `Code` in OWID).
+
+```{r}
+#| label: join-health-data
+#| message: false
+#| warning: false
+
+# Import health metrics from root data folder
+life_exp_data <- read_csv("data/life_expectancy_data.csv")
+
+# Isolate 2021 health metrics
+life_exp_2021 <- life_exp_data |>
+  filter(Year == 2021) |>
+  rename(life_expectancy = 4)
+
+# Execute spatial left join
+world_health_map <- world_map |>
+  filter(continent != "Antarctica") |>
+  left_join(life_exp_2021, by = c("iso_a3" = "Code"))
+```
+
+## Global Health Choropleth Map
+
+```{r}
+#| label: fig-global-life-exp-map
+#| fig-cap: "Figure 1: Global distribution of period life expectancy at birth in years (2021)."
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 5.5
+#| fig-align: center
+
+ggplot(world_health_map) +
+  geom_sf(aes(fill = life_expectancy), color = "white", size = 0.1) +
+  scale_fill_viridis_c(
+    option = "magma",
+    na.value = "grey90",
+    name = "Life Expectancy (Years)"
+  ) +
+  labs(
+    title = "Global Life Expectancy Inequities (2021)",
+    subtitle = "Period life expectancy at birth across national economies",
+    caption = "Source: Our World in Data / UN World Population Prospects."
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(2, "cm"),
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+# Module 3: Comparative Spatial Zoom — Regional Focus
+
+We filter our spatial dataset to examine intra-regional variance across **Latin America & Caribbean** and **Sub-Saharan Africa**.
+
+```{r}
+#| label: fig-regional-health-map
+#| fig-cap: "Figure 2: Regional breakdown of life expectancy across Africa and South America."
+#| message: false
+#| warning: false
+#| fig-width: 10
+#| fig-height: 5
+#| fig-align: center
+
+regional_map <- world_health_map |>
+  filter(continent %in% c("Africa", "South America"))
+
+ggplot(regional_map) +
+  geom_sf(aes(fill = life_expectancy), color = "white", size = 0.2) +
+  scale_fill_viridis_c(option = "viridis", na.value = "grey85", name = "Years") +
+  facet_wrap(~continent) +
+  labs(
+    title = "Intra-Regional Health Divergence (2021)",
+    subtitle = "Comparative spatial breakdown across Africa and South America",
+    caption = "Source: Our World in Data."
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(1.5, "cm"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+```
+
+------------------------------------------------------------------------
+
+# Student Coding Lab Exercises
+
+Complete these four exercises in your R environment to practice your spatial pipeline skills.
+
+### Exercise 1: Filter Specific Case Study Countries
+
+``` r
+# EXERCISE 1: Filter and map our 8 core comparative cases
+target_map <- world_health_map |>
+  filter(name %in% c("Jamaica", "Canada", "United States", "India", 
+                     "Brazil", "Spain", "Nigeria", "South Africa"))
+
+ggplot(target_map) +
+  geom_sf(aes(fill = life_expectancy)) +
+  scale_fill_viridis_c(option = "plasma") +
+  labs(title = "Life Expectancy across Comparative Case Studies") +
+  theme_minimal()
+```
+
+### Exercise 2: Map Education Stock Metrics
+
+``` r
+# EXERCISE 2: Import, join, and map education data for 2020
+edu_data <- read_csv("data/education_data.csv") |>
+  filter(Year == 2020) |>
+  rename(schooling = 4)
+
+world_edu_map <- world_map |>
+  filter(continent != "Antarctica") |>
+  left_join(edu_data, by = c("iso_a3" = "Code"))
+
+ggplot(world_edu_map) +
+  geom_sf(aes(fill = schooling), color = "white", size = 0.1) +
+  scale_fill_viridis_c(option = "cividis", name = "Years") +
+  labs(
+    title = "Global Mean Years of Schooling (2020)",
+    subtitle = "Adult educational attainment stock across national economies"
+  ) +
+  theme_minimal()
+```
+
+### Exercise 3: Audit Missing Spatial Data
+
+``` r
+# EXERCISE 3: Audit spatial missingness by continent
+missing_by_continent <- world_health_map |>
+  st_drop_geometry() |>
+  group_by(continent) |>
+  summarise(
+    total_countries = n(),
+    missing_health  = sum(is.na(life_expectancy))
+  )
+
+missing_by_continent
+```
+
+### Exercise 4: Reproject Map Coordinate Reference Systems
+
+``` r
+# EXERCISE 4: Reproject map geometries to Robinson projection
+world_robinson <- st_transform(world_health_map, crs = "+proj=robin")
+
+ggplot(world_robinson) +
+  geom_sf(aes(fill = life_expectancy), color = "white", size = 0.1) +
+  scale_fill_viridis_c(option = "magma") +
+  labs(title = "Global Life Expectancy (Robinson Projection)") +
+  theme_minimal()
+```
