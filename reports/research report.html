@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Neena Abimbola Albarus">
+
+<title>Lab 1: Measuring Global Human Development in R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="research report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="research report_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="research report_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="research report_files/libs/quarto-html/popper.min.js"></script>
+<script src="research report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="research report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="research report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="research report_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="research report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="research report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="research report_files/libs/bootstrap/bootstrap-c2e55264ed47ce3b2e0326a2269f9400.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-the-computational-approach-to-social-science" id="toc-introduction-the-computational-approach-to-social-science" class="nav-link active" data-scroll-target="#introduction-the-computational-approach-to-social-science"><span class="header-section-number">1</span> Introduction: The Computational Approach to Social Science</a></li>
+  <li><a href="#module-1-operationalising-auditing-material-deprivation" id="toc-module-1-operationalising-auditing-material-deprivation" class="nav-link" data-scroll-target="#module-1-operationalising-auditing-material-deprivation"><span class="header-section-number">2</span> Module 1: Operationalising &amp; Auditing Material Deprivation</a>
+  <ul class="collapse">
+  <li><a href="#conceptualisation-operationalisation" id="toc-conceptualisation-operationalisation" class="nav-link" data-scroll-target="#conceptualisation-operationalisation"><span class="header-section-number">2.1</span> Conceptualisation &amp; Operationalisation</a></li>
+  <li><a href="#step-1-importing-raw-data-into-r" id="toc-step-1-importing-raw-data-into-r" class="nav-link" data-scroll-target="#step-1-importing-raw-data-into-r"><span class="header-section-number">2.2</span> Step 1: Importing Raw Data into R</a></li>
+  <li><a href="#step-2-first-contact-inspecting-data-structure-variable-types" id="toc-step-2-first-contact-inspecting-data-structure-variable-types" class="nav-link" data-scroll-target="#step-2-first-contact-inspecting-data-structure-variable-types"><span class="header-section-number">2.3</span> Step 2: “First Contact” — Inspecting Data Structure &amp; Variable Types</a>
+  <ul class="collapse">
+  <li><a href="#understanding-r-data-types" id="toc-understanding-r-data-types" class="nav-link" data-scroll-target="#understanding-r-data-types"><span class="header-section-number">2.3.1</span> Understanding R Data Types</a></li>
+  </ul></li>
+  <li><a href="#step-3-auditing-units-of-analysis-missing-data" id="toc-step-3-auditing-units-of-analysis-missing-data" class="nav-link" data-scroll-target="#step-3-auditing-units-of-analysis-missing-data"><span class="header-section-number">2.4</span> Step 3: Auditing Units of Analysis &amp; Missing Data</a>
+  <ul class="collapse">
+  <li><a href="#why-is-data-missing-a-global-south-perspective" id="toc-why-is-data-missing-a-global-south-perspective" class="nav-link" data-scroll-target="#why-is-data-missing-a-global-south-perspective"><span class="header-section-number">2.4.1</span> Why Is Data Missing? A Global South Perspective</a></li>
+  </ul></li>
+  <li><a href="#step-4-building-the-data-transformation-pipeline" id="toc-step-4-building-the-data-transformation-pipeline" class="nav-link" data-scroll-target="#step-4-building-the-data-transformation-pipeline"><span class="header-section-number">2.5</span> Step 4: Building the Data Transformation Pipeline</a></li>
+  <li><a href="#step-5-visualising-poverty-dynamics-with-ggplot2" id="toc-step-5-visualising-poverty-dynamics-with-ggplot2" class="nav-link" data-scroll-target="#step-5-visualising-poverty-dynamics-with-ggplot2"><span class="header-section-number">2.6</span> Step 5: Visualising Poverty Dynamics with <code>ggplot2</code></a></li>
+  <li><a href="#global-south-analytical-insights-of-poverty-dynamics" id="toc-global-south-analytical-insights-of-poverty-dynamics" class="nav-link" data-scroll-target="#global-south-analytical-insights-of-poverty-dynamics"><span class="header-section-number">2.7</span> Global South Analytical Insights of Poverty Dynamics</a></li>
+  </ul></li>
+  <li><a href="#module-2-measuring-human-capital-formation" id="toc-module-2-measuring-human-capital-formation" class="nav-link" data-scroll-target="#module-2-measuring-human-capital-formation"><span class="header-section-number">3</span> Module 2: Measuring Human Capital Formation</a>
+  <ul class="collapse">
+  <li><a href="#stock-vs.-flow-metrics-in-education" id="toc-stock-vs.-flow-metrics-in-education" class="nav-link" data-scroll-target="#stock-vs.-flow-metrics-in-education"><span class="header-section-number">3.1</span> Stock vs.&nbsp;Flow Metrics in Education</a></li>
+  <li><a href="#data-pipeline-cleaning-variable-names" id="toc-data-pipeline-cleaning-variable-names" class="nav-link" data-scroll-target="#data-pipeline-cleaning-variable-names"><span class="header-section-number">3.2</span> Data Pipeline: Cleaning Variable Names</a></li>
+  <li><a href="#visualising-educational-expansion" id="toc-visualising-educational-expansion" class="nav-link" data-scroll-target="#visualising-educational-expansion"><span class="header-section-number">3.3</span> Visualising Educational Expansion</a></li>
+  <li><a href="#global-south-analytical-insights-educational-catch-up-legacies" id="toc-global-south-analytical-insights-educational-catch-up-legacies" class="nav-link" data-scroll-target="#global-south-analytical-insights-educational-catch-up-legacies"><span class="header-section-number">3.4</span> Global South Analytical Insights: Educational Catch-Up &amp; Legacies</a></li>
+  </ul></li>
+  <li><a href="#module-3-evaluating-population-health-life-expectancy" id="toc-module-3-evaluating-population-health-life-expectancy" class="nav-link" data-scroll-target="#module-3-evaluating-population-health-life-expectancy"><span class="header-section-number">4</span> Module 3: Evaluating Population Health (Life Expectancy)</a>
+  <ul class="collapse">
+  <li><a href="#life-expectancy-as-an-overall-health-metric" id="toc-life-expectancy-as-an-overall-health-metric" class="nav-link" data-scroll-target="#life-expectancy-as-an-overall-health-metric"><span class="header-section-number">4.1</span> Life Expectancy as an Overall Health Metric</a></li>
+  <li><a href="#the-health-data-pipeline" id="toc-the-health-data-pipeline" class="nav-link" data-scroll-target="#the-health-data-pipeline"><span class="header-section-number">4.2</span> The Health Data Pipeline</a></li>
+  <li><a href="#visualising-health-trajectories-major-shocks" id="toc-visualising-health-trajectories-major-shocks" class="nav-link" data-scroll-target="#visualising-health-trajectories-major-shocks"><span class="header-section-number">4.3</span> Visualising Health Trajectories &amp; Major Shocks</a></li>
+  <li><a href="#global-south-analytical-insights-health-equity-systemic-inequity" id="toc-global-south-analytical-insights-health-equity-systemic-inequity" class="nav-link" data-scroll-target="#global-south-analytical-insights-health-equity-systemic-inequity"><span class="header-section-number">4.4</span> Global South Analytical Insights: Health Equity &amp; Systemic Inequity</a></li>
+  </ul></li>
+  <li><a href="#student-coding-lab-exercises" id="toc-student-coding-lab-exercises" class="nav-link" data-scroll-target="#student-coding-lab-exercises"><span class="header-section-number">5</span> Student Coding Lab Exercises</a>
+  <ul class="collapse">
+  <li><a href="#exercise-1-joining-datasets-inner_join" id="toc-exercise-1-joining-datasets-inner_join" class="nav-link" data-scroll-target="#exercise-1-joining-datasets-inner_join"><span class="header-section-number">5.1</span> Exercise 1: Joining Datasets (<code>inner_join</code>)</a></li>
+  <li><a href="#exercise-2-calculating-group-summary-statistics-group_by-summarise" id="toc-exercise-2-calculating-group-summary-statistics-group_by-summarise" class="nav-link" data-scroll-target="#exercise-2-calculating-group-summary-statistics-group_by-summarise"><span class="header-section-number">5.2</span> Exercise 2: Calculating Group Summary Statistics (<code>group_by</code> + <code>summarise</code>)</a></li>
+  <li><a href="#exercise-3-scatter-plots-trendlines-geom_point-geom_smooth" id="toc-exercise-3-scatter-plots-trendlines-geom_point-geom_smooth" class="nav-link" data-scroll-target="#exercise-3-scatter-plots-trendlines-geom_point-geom_smooth"><span class="header-section-number">5.3</span> Exercise 3: Scatter Plots &amp; Trendlines (<code>geom_point</code> + <code>geom_smooth</code>)</a></li>
+  <li><a href="#exercise-4-measuring-shock-impacts" id="toc-exercise-4-measuring-shock-impacts" class="nav-link" data-scroll-target="#exercise-4-measuring-shock-impacts"><span class="header-section-number">5.4</span> Exercise 4: Measuring Shock Impacts</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Lab 1: Measuring Global Human Development in R</h1>
+<p class="subtitle lead">An Introduction to Computational Methods for Social Scientists</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Neena Abimbola Albarus </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-the-computational-approach-to-social-science" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction: The Computational Approach to Social Science</h1>
+<p>Welcome to your first data lab in this series!</p>
+<p>In political science, sociology, social work and development economics, we often talk about abstract ideas like state capacity, social welfare and development in general. But as empirical social scientists, we move from abstract concepts to numerical measurements. To do this, we must learn how to observe, measure and then critically evaluate social phenomena using empirical evidence.</p>
+<p>In this workbook, we are going to explore computational social science using R. We will examine three pillars of human development across eight very different national political economies:</p>
+<ol type="1">
+<li><strong>Extreme Poverty</strong> (Material Deprivation)</li>
+<li><strong>Educational Attainment</strong> (Human Capital Formation)</li>
+<li><strong>Life Expectancy</strong> (Population Health and Public Infrastructure)</li>
+</ol>
+<p>While working through this document, you will learn how to inspect raw data files, handle missing survey values, write data transformation pipelines using <code>dplyr</code>, and create clean, academic-quality charts using <code>ggplot2</code>.</p>
+<blockquote class="blockquote">
+<p><strong>A Note on Data Hygiene:</strong> We never edit raw data files manually. Every cleaning, filtering, and transformation step must be executed through code. That way, our work stays transparent, reproducible and easy for independent researchers to verify!</p>
+</blockquote>
+<hr>
+</section>
+<section id="module-1-operationalising-auditing-material-deprivation" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Module 1: Operationalising &amp; Auditing Material Deprivation</h1>
+<section id="conceptualisation-operationalisation" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="conceptualisation-operationalisation"><span class="header-section-number">2.1</span> Conceptualisation &amp; Operationalisation</h2>
+<p>Before writing any code, let us break down how quantitative research works. Social scientists separate measurement into two key steps:</p>
+<ul>
+<li><strong>Conceptualisation</strong> Defining the theoretical idea we want to study (e.g., “material poverty”).</li>
+<li><strong>Operationalisation</strong> Choosing the exact numerical metric we will use to measure that idea in the real world.</li>
+</ul>
+<p>To compare poverty across international borders, we cannot simply measure household income in local currencies. A household earning 500,000 Nigerian Naira per month experiences a completely different standard of living than one earning 500,000 Jamaican Dollars or 500,000 Indian Rupees.</p>
+<p>To solve this, international organisations use <strong>Purchasing Power Parity (PPP)</strong>. PPP is an economic adjustment that accounts for local price levels. It calculates how much local currency you need to buy the exact same basket of goods and services in different countries.</p>
+<p>In this module, we operationalise “extreme poverty” as the percentage of a nation’s population living on less than <strong>$3.00 per day in PPP-adjusted US dollars</strong>.</p>
+<hr>
+</section>
+<section id="step-1-importing-raw-data-into-r" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="step-1-importing-raw-data-into-r"><span class="header-section-number">2.2</span> Step 1: Importing Raw Data into R</h2>
+<p>Let us start by loading our raw CSV dataset into R using the <code>read_csv()</code> function from the <code>readr</code> package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read raw poverty dataset into an R object named poverty_data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>poverty_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/poverty_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 59372 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): Entity, Code, World region according to OWID
+dbl (3): Year, Share of population in poverty ($3 a day), Population
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="step-2-first-contact-inspecting-data-structure-variable-types" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="step-2-first-contact-inspecting-data-structure-variable-types"><span class="header-section-number">2.3</span> Step 2: “First Contact” — Inspecting Data Structure &amp; Variable Types</h2>
+<p>Before doing any maths or filtering, always inspect the shape of your dataset. We can run <code>glimpse()</code>, which gives us a read-only view of the dataset’s dimensions and column types.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect dataset dimensions, column names, and data types</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(poverty_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 59,372
+Columns: 6
+$ Entity                                      &lt;chr&gt; "Afghanistan", "Afghanista…
+$ Code                                        &lt;chr&gt; "AFG", "AFG", "AFG", "AFG"…
+$ Year                                        &lt;dbl&gt; -10000, -9000, -8000, -700…
+$ `Share of population in poverty ($3 a day)` &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA…
+$ Population                                  &lt;dbl&gt; 14737, 20405, 28253, 39120…
+$ `World region according to OWID`            &lt;chr&gt; "Asia", "Asia", "Asia", "A…</code></pre>
+</div>
+</div>
+<section id="understanding-r-data-types" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="understanding-r-data-types"><span class="header-section-number">2.3.1</span> Understanding R Data Types</h3>
+<p>Take a look at the labels next to each column name in the output above. In R, every variable has a data type (or class), which tells R what you are allowed to do with it:</p>
+<ol type="1">
+<li><strong><code>chr</code> (Character)</strong> Text strings. In our dataset, <code>Entity</code> and <code>Code</code> are character variables. You cannot do maths on character data!</li>
+<li><strong><code>dbl</code> (Double) or <code>int</code> (Integer)</strong> Numbers. <code>dbl</code> holds decimal numbers and <code>int</code> holds whole numbers. In our dataset, <code>Year</code> and the poverty percentage column are numeric.</li>
+<li><strong><code>lgl</code> (Logical)</strong> Boolean values (<code>TRUE</code> or <code>FALSE</code>).</li>
+</ol>
+<blockquote class="blockquote">
+<p><strong>Note:</strong> Beginners often get stuck because numbers were accidentally imported as text (<code>chr</code>) due to symbols or formatting in the raw file. If a column with numbers is classified as <code>chr</code>, functions like <code>mean()</code> or <code>sum()</code> will crash. Always check that quantitative metrics imported as <code>dbl</code> or <code>int</code> before moving forward!</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="step-3-auditing-units-of-analysis-missing-data" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="step-3-auditing-units-of-analysis-missing-data"><span class="header-section-number">2.4</span> Step 3: Auditing Units of Analysis &amp; Missing Data</h2>
+<p>Large datasets from sources like Our World in Data or the World Bank are expansive, but they often mix individual countries with regional aggregates or global averages (like <code>"World"</code>, <code>"Sub-Saharan Africa"</code>, or <code>"High income"</code>).</p>
+<p>If you accidentally include <code>"World"</code> alongside <code>"Jamaica"</code> or <code>"Nigeria"</code>, regional averages will get treated as individual countries, which distorts the comparative analysis!</p>
+<p>Let us run two quick audits: 1. Count how many unique entities exist in the raw global file. 2. Check how many years of actual survey data we have versus missing values (<code>NA</code>) for our eight target countries since 1990.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Audit 1: Count the total number of unique entities present in the raw file</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>poverty_data <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(Entity) <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 292</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Audit 2: Evaluate missingness across our target comparative units</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>poverty_data <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Entity <span class="sc">%in%</span> countries_to_compare, Year <span class="sc">&gt;=</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Entity) <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_years      =</span> <span class="fu">n</span>(),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">observed_surveys =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Share of population in poverty ($3 a day)</span><span class="st">`</span>)),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_surveys  =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Share of population in poverty ($3 a day)</span><span class="st">`</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 4
+  Entity        total_years observed_surveys missing_surveys
+  &lt;chr&gt;               &lt;int&gt;            &lt;int&gt;           &lt;int&gt;
+1 Brazil                 35               31               4
+2 Canada                 34               33               1
+3 India                  34                6              28
+4 Jamaica                34                8              26
+5 Nigeria                34                8              26
+6 South Africa           34                7              27
+7 Spain                  34               30               4
+8 United States          35               35               0</code></pre>
+</div>
+</div>
+<section id="why-is-data-missing-a-global-south-perspective" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="why-is-data-missing-a-global-south-perspective"><span class="header-section-number">2.4.1</span> Why Is Data Missing? A Global South Perspective</h3>
+<p>Look at the summary table from Audit 2. Notice how the amount of missing data varies depending on the country.</p>
+<p>In social science, missing data is rarely random:</p>
+<ul>
+<li><strong>Missingness by Design</strong> Wealthier nations like Canada and the United States show lots of missing observations at the $3.00/day poverty line. This is not a mistake! Statistical agencies in rich countries do not field household surveys for extreme absolute poverty because absolute deprivation falls below measurable survey thresholds there.</li>
+<li><strong>Structural Capacity &amp; Fiscal Constraints</strong> Developing nations in the Global South often have multi-year gaps between survey points. National household censuses are expensive and logistically demanding. Foreign debt servicing, structural adjustment programmes and fiscal austerity frequently constrain state statistical offices in post-colonial economies, limiting their capacity to run annual household surveys.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="step-4-building-the-data-transformation-pipeline" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="step-4-building-the-data-transformation-pipeline"><span class="header-section-number">2.5</span> Step 4: Building the Data Transformation Pipeline</h2>
+<p>Now that we have audited our file, let us build a clean data pipeline using <code>dplyr</code>.</p>
+<p>We can use R’s native pipe operator (<code>|&gt;</code>). The pipe takes whatever object is on its left and passes it as the first input into the function on its right. When reading code, translate <code>|&gt;</code> in your head as <strong>“AND THEN”</strong>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct clean working dataset for Module 1</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>poverty_countries <span class="ot">&lt;-</span> poverty_data <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step A: Keep post-1990 observations</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step B: Drop years with missing survey data using the exclamation mark (!)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Share of population in poverty ($3 a day)</span><span class="st">`</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step C: Keep only our target countries</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Entity <span class="sc">%in%</span> countries_to_compare) <span class="sc">|&gt;</span> </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Step D: Sort rows by country and year</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Entity, Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+</section>
+<section id="step-5-visualising-poverty-dynamics-with-ggplot2" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="step-5-visualising-poverty-dynamics-with-ggplot2"><span class="header-section-number">2.6</span> Step 5: Visualising Poverty Dynamics with <code>ggplot2</code></h2>
+<p>Now that the dataset is confirmed to be clean, we can build a plot using <code>ggplot2</code>.</p>
+<p><code>ggplot2</code> uses the <strong>Grammar of Graphics</strong>, which builds charts in layers. Notice that while <code>dplyr</code> joins functions using the pipe (<code>|&gt;</code>), <code>ggplot2</code> connects visual layers using the plus sign (<code>+</code>).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-poverty-trends" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-poverty-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-poverty-trends-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-poverty-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Percentage of national population living on less than $3.00 daily (PPP adjusted) across eight nations (1990–Present).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="global-south-analytical-insights-of-poverty-dynamics" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="global-south-analytical-insights-of-poverty-dynamics"><span class="header-section-number">2.7</span> Global South Analytical Insights of Poverty Dynamics</h2>
+<p>Take a close look at Figure 1.We can examine underlying structural conditions:</p>
+<ol type="1">
+<li><strong>Floor Effects &amp; Western-Centric Metrics</strong> Notice how Canada and the United States flatline at <span class="math inline">\(0\%\)</span>. This demonstrates a <strong>measurement floor effect</strong>. The $3/day line is built to measure global absolute deprivation and fails to reflect relative poverty, precarious labour, or systemic inequality in the Global North.</li>
+<li><strong>State-Led Interventions vs.&nbsp;Global Market Vulnerability</strong> Compare the steep poverty declines in <strong>India</strong> and <strong>Brazil</strong> against the more persistent rates in <strong>Nigeria</strong> and <strong>Jamaica</strong>:
+<ul>
+<li><strong>Brazil-</strong> The dramatic poverty reduction during the 2000s highlights the power of targeted, state-led social protection policies such as <em>Bolsa Família</em>, combined with favorable global commodity terms of trade.</li>
+<li><strong>India-</strong> Rapid growth led to substantial reductions in headcount poverty, though high structural informal employment means large population segments remain vulnerable to economic shocks.</li>
+<li><strong>Jamaica &amp; Nigeria-</strong> Small island developing states (SIDS) and oil-dependent economies face persistent global terms-of-trade shocks, high foreign debt burdens and vulnerable domestic supply chains that can often stall poverty reduction even during periods of national GDP growth.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="module-2-measuring-human-capital-formation" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Module 2: Measuring Human Capital Formation</h1>
+<section id="stock-vs.-flow-metrics-in-education" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="stock-vs.-flow-metrics-in-education"><span class="header-section-number">3.1</span> Stock vs.&nbsp;Flow Metrics in Education</h2>
+<p>Now let us switch gears to education.</p>
+<p>In public policy and economics, education is viewed as an investment in <strong>human capital</strong> which is the total stock of skills, knowledge and overall capacity and capabilities within a workforce. Higher human capital is closely linked to technological adoption and sovereign economic productivity.</p>
+<p>When looking at education metrics, social scientists divide them into two categories:</p>
+<ul>
+<li><strong>Flow Metrics-</strong> Measures of current participation (e.g.&nbsp;primary school enrollment rates this year). Flow metrics change quickly when policies change, but they do not tell you the skill level of the overall adult workforce.</li>
+<li><strong>Stock Metrics-</strong> Measures of total accumulated education over time (e.g.&nbsp;average years of schooling completed by adults aged 15+). Stock metrics change slowly because they reflect decades of historic educational investment.</li>
+</ul>
+<p>In this module, we will analyse <strong>Mean Years of Schooling</strong> (a stock metric) to examine long-term human capital accumulation.</p>
+<hr>
+</section>
+<section id="data-pipeline-cleaning-variable-names" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data-pipeline-cleaning-variable-names"><span class="header-section-number">3.2</span> Data Pipeline: Cleaning Variable Names</h2>
+<p>Public datasets often come with long and messy column headers that include spaces or citations. We can use <code>rename()</code> from <code>dplyr</code> to convert messy column titles into clean, simple variable names.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import education dataset</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>education_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/education_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 3699 Columns: 4
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): Entity, Code
+dbl (2): Year, Average years of schooling
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean education data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>education_countries <span class="ot">&lt;-</span> education_data <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    Year <span class="sc">&gt;=</span> <span class="dv">1990</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    Entity <span class="sc">%in%</span> countries_to_compare</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rename column 4 to 'schooling_years'</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">schooling_years =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(schooling_years)) <span class="sc">|&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Entity, Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+</section>
+<section id="visualising-educational-expansion" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="visualising-educational-expansion"><span class="header-section-number">3.3</span> Visualising Educational Expansion</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-education-trends" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-education-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-education-trends-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-education-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Average years of formal education accumulated by adults aged 15+ across eight nations (1990–Present).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="global-south-analytical-insights-educational-catch-up-legacies" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="global-south-analytical-insights-educational-catch-up-legacies"><span class="header-section-number">3.4</span> Global South Analytical Insights: Educational Catch-Up &amp; Legacies</h2>
+<p>Check out the educational trajectories displayed in Figure 2:</p>
+<ol type="1">
+<li><strong>Colonial Legacies &amp; Baseline Inequality</strong> Notice the substantial initial gap in 1990 between post-industrial economies (Canada, United States) and post-colonial societies (India, Nigeria, South Africa, Jamaica). Colonial-era educational systems were often extractive and restrictive, moreso designed to train minor administrative staff rather than foster broad-based national human capital. What might the purpose of education in your region be now?</li>
+<li><strong>Post-Colonial Educational Expansion</strong> Despite historical disadvantages, Global South nations demonstrate steady, upward educational expansion post-1990. State-funded initiatives, global campaigns like the Millennium Development Goals (MDGs) and domestic investments have expanded access to schooling across Latin America, South Asia, and Sub-Saharan Africa.</li>
+<li><strong>Quantity vs.&nbsp;Quality Disconnect</strong> While mean years of schooling (a quantitative stock metric) shows clear convergence, social scientists from the Global South emphasise that <strong>years in school do not automatically equal learning outcomes</strong>. Under-resourced public schools, high student-to-teacher ratios and brain drain (the emigration of skilled graduates) mean that educational expansion must be paired with structural economic opportunities locally.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="module-3-evaluating-population-health-life-expectancy" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Module 3: Evaluating Population Health (Life Expectancy)</h1>
+<section id="life-expectancy-as-an-overall-health-metric" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="life-expectancy-as-an-overall-health-metric"><span class="header-section-number">4.1</span> Life Expectancy as an Overall Health Metric</h2>
+<p>Our third dimension is <strong>population health</strong>, measured through <strong>Life Expectancy at Birth</strong>.</p>
+<p>In comparative politics and development sociology, life expectancy is considered a primary composite health indicator. A country cannot achieve high average life expectancy without:</p>
+<ol type="1">
+<li>Clean water, working sanitation and reliable electricity.</li>
+<li>Functional healthcare networks, including basic immunisations and maternal care.</li>
+<li>Food security and solid nutrition.</li>
+<li>Relative protection from violence, political instability, and environmental crises.</li>
+</ol>
+<hr>
+</section>
+<section id="the-health-data-pipeline" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="the-health-data-pipeline"><span class="header-section-number">4.2</span> The Health Data Pipeline</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import life expectancy dataset</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>life_exp_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/yawdgyal/Desktop/R for github/social-science-report-template/data/life_expectancy_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 21565 Columns: 4
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): Entity, Code
+dbl (2): Year, Life expectancy
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean life expectancy data</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>life_exp_countries <span class="ot">&lt;-</span> life_exp_data <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    Year <span class="sc">&gt;=</span> <span class="dv">1990</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    Entity <span class="sc">%in%</span> countries_to_compare</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">life_expectancy =</span> <span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(life_expectancy)) <span class="sc">|&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Entity, Year)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+</section>
+<section id="visualising-health-trajectories-major-shocks" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="visualising-health-trajectories-major-shocks"><span class="header-section-number">4.3</span> Visualising Health Trajectories &amp; Major Shocks</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-life-expectancy-trends" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-life-expectancy-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="research-report_files/figure-html/fig-life-expectancy-trends-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-life-expectancy-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Life expectancy at birth in years across eight comparative cases (1990–Present).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="global-south-analytical-insights-health-equity-systemic-inequity" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="global-south-analytical-insights-health-equity-systemic-inequity"><span class="header-section-number">4.4</span> Global South Analytical Insights: Health Equity &amp; Systemic Inequity</h2>
+<p>Figure 3 highlights how global health inequities and external mortality shocks manifest in population data:</p>
+<ol type="1">
+<li><strong>The HIV/AIDS Crisis in South Africa &amp; Global Health Inequity</strong> Look at South Africa’s line between 1990 and 2005, where life expectancy plummeted from ~63 years down to ~53 years. This catastrophic drop reflects the HIV/AIDS epidemic. Crucially, from a Global South analytical perspective, the delayed recovery was exacerbated by international patent restrictions and high pricing on antiretroviral drugs by Western pharmaceutical corporations. The rapid recovery post-2005 demonstrates the power of state-provided generic antiretroviral therapy and global health solidarity.</li>
+<li><strong>Global Vaccine Equity &amp; the COVID-19 Shock (2020–2021)</strong> Notice the downturn across nations in 2020–2021. While COVID-19 impacted mortality globally, the capacity to rebound differed sharply. Wealthier Global North states hoarded vaccine supplies early in the pandemic, while Global South states faced severe supply chain delays, intellectual property barriers (TRIPS waiver debates) and fiscal limits in supporting health systems during acute crises.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="student-coding-lab-exercises" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Student Coding Lab Exercises</h1>
+<p>Try working through these four hands-on exercises in your R Console or a script file to practice your <code>dplyr</code> data manipulation, relational joins, and <code>ggplot2</code> plotting skills!</p>
+<section id="exercise-1-joining-datasets-inner_join" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="exercise-1-joining-datasets-inner_join"><span class="header-section-number">5.1</span> Exercise 1: Joining Datasets (<code>inner_join</code>)</h2>
+<p>In research, we often combine metrics from different datasets into one file to test relationships between variables.</p>
+<p>Write a script using <code>inner_join()</code> to merge <code>education_countries</code> and <code>life_exp_countries</code> by <code>Entity</code> and <code>Year</code>. Keep only these columns: <code>Entity</code>, <code>Year</code>, <code>schooling_years</code> and <code>life_expectancy</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># EXERCISE 1: Join education and health data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>combined_edu_health <span class="ot">&lt;-</span> education_countries <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(life_exp_countries, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Entity"</span>, <span class="st">"Year"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Entity, Year, schooling_years, life_expectancy)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the merged output</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(combined_edu_health)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="exercise-2-calculating-group-summary-statistics-group_by-summarise" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="exercise-2-calculating-group-summary-statistics-group_by-summarise"><span class="header-section-number">5.2</span> Exercise 2: Calculating Group Summary Statistics (<code>group_by</code> + <code>summarise</code>)</h2>
+<p>Let us calculate the total life expectancy gained by each country between its earliest post-1990 recording and its most recent observation.</p>
+<p>Write a pipeline using <code>group_by()</code> and <code>summarise()</code> to find the starting life expectancy, recent life expectancy and net gain for each nation. Sort your final table by net gain in descending order.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># EXERCISE 2: Calculate health gains</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>life_gains <span class="ot">&lt;-</span> life_exp_countries <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Entity) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">initial_life =</span> life_expectancy[<span class="fu">which.min</span>(Year)],</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">recent_life  =</span> life_expectancy[<span class="fu">which.max</span>(Year)],</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_gain     =</span> recent_life <span class="sc">-</span> initial_life</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(net_gain))</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># View the summary table</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>life_gains</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="exercise-3-scatter-plots-trendlines-geom_point-geom_smooth" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="exercise-3-scatter-plots-trendlines-geom_point-geom_smooth"><span class="header-section-number">5.3</span> Exercise 3: Scatter Plots &amp; Trendlines (<code>geom_point</code> + <code>geom_smooth</code>)</h2>
+<p>Using your <code>combined_edu_health</code> object from Exercise 1, build a scatter plot in <code>ggplot2</code>. Place <strong>Mean Years of Schooling on the X-axis</strong> and <strong>Life Expectancy on the Y-axis</strong>. Add a dashed linear trendline across the points using <code>geom_smooth(method = "lm")</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># EXERCISE 3: Build a scatter plot with a linear trendline</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_edu_health, <span class="fu">aes</span>(<span class="at">x =</span> schooling_years, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> Entity), <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Education vs. Life Expectancy"</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Observations from 1990–Present"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Mean Years of Schooling (Adults 15+)"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Life Expectancy at Birth (Years)"</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Country Case"</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="exercise-4-measuring-shock-impacts" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="exercise-4-measuring-shock-impacts"><span class="header-section-number">5.4</span> Exercise 4: Measuring Shock Impacts</h2>
+<p>Write a pipeline using <code>life_exp_countries</code> to isolate observations for <strong>2019</strong> and <strong>2021</strong>. Calculate the change in life expectancy during the pandemic period for each country, and find which nation experienced the biggest drop.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># EXERCISE 4: Calculate life expectancy change from 2019 to 2021</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>covid_impact <span class="ot">&lt;-</span> life_exp_countries <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2019</span>, <span class="dv">2021</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Entity) <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">life_2019   =</span> life_expectancy[Year <span class="sc">==</span> <span class="dv">2019</span>],</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">life_2021   =</span> life_expectancy[Year <span class="sc">==</span> <span class="dv">2021</span>],</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_change  =</span> life_2021 <span class="sc">-</span> life_2019</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(net_change)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># View the pandemic impact table</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>covid_impact</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
